@@ -2,6 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## AWS EC2 Deployment
+
+This project is configured for automatic deployment to an AWS EC2 instance using GitHub Actions.
+Any push to the `main` branch will trigger the build and deploy workflow.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -44,4 +49,4 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-"# fronted" 
+"# fronted"

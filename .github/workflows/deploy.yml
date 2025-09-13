@@ -1,0 +1,36 @@
+name: Deploy Frontend to AWS EC2
+
+on:
+  push:
+    branches:
+      - main # O la rama que uses como principal, ej: master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Puedes ajustar la versión de Node si es necesario
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "build/*"
+        target: "/var/www/html" # Directorio de destino en tu EC2
+        strip_components: 1
