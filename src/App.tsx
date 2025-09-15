@@ -11,6 +11,7 @@ import MotorTransport from './entities/motorTransport/motorTransport';
 import Patio from './entities/patio/patio';
 import Tab from './entities/tab/tab';
 import SparePart from './entities/sparePart/sparePart';
+import Valuelist from './entities/valuelist/valuelist';
 
 
 
@@ -42,7 +43,8 @@ function App() {
         { label: 'Tabuladores', href: '/tab' },
         { label: 'Patios', href: '/patio' },
         { label: 'Autotransporte', href: '/motorTransport' },
-        { label: 'Refacciones', href: '/sparePart' }
+        { label: 'Refacciones', href: '/sparePart' },
+        { label: 'Valuelists', href: '/valuelist' }
       ]
     },
         {
@@ -79,6 +81,7 @@ function App() {
             <Route path="/patio" element={<Patio />} />
             <Route path="/tab" element={<Tab />} />
             <Route path="/sparePart" element={<SparePart />} />
+            <Route path="/valuelist" element={<Valuelist />} />
             {/* Más rutas públicas */}
           </Routes>
         </Router>

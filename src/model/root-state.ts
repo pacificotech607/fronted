@@ -5,6 +5,7 @@ import { PatioState } from '../entities/patio/patio.reducer';
 import { SparePartState } from '../entities/sparePart/sparePart.reducer';
 import { TabState } from '../entities/tab/tab.reducer';
 import { UserState } from '../entities/user/user.reducer';
+import { ValuelistState } from '../entities/valuelist/valuelist.reducer';
 
 export interface IRootState {
   readonly company: CompanyState;
@@ -14,4 +15,5 @@ export interface IRootState {
   readonly sparePart: SparePartState;
   readonly tab: TabState;
   readonly user: UserState;
+  readonly valuelist: ValuelistState;
 }

@@ -48,9 +48,9 @@ const companyReducer = (state: CompanyState = initialState, action: any): Compan
       return {
         ...state,
         loading: false,
-        companies: action.payload.data.docs,
-        totalPages: action.payload.data.totalPages,
-        page: action.payload.data.page,
+        companies: action.payload.data.data.docs,
+        totalPages: action.payload.data.data.totalPages,
+        page: action.payload.data.data.page,
       };
     case `${ACTION_TYPES.FETCH_COMPANY}_FULFILLED`:
       return {

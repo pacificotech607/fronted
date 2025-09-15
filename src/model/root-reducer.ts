@@ -7,6 +7,7 @@ import patio from '../entities/patio/patio.reducer';
 import sparePart from '../entities/sparePart/sparePart.reducer';
 import tab from '../entities/tab/tab.reducer';
 import user from '../entities/user/user.reducer';
+import valuelist from '../entities/valuelist/valuelist.reducer';
 
 const rootReducer = combineReducers({
   company,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   sparePart,
   tab,
   user,
+  valuelist,
 });
 
 export default rootReducer;

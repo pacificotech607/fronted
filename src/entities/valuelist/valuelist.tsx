@@ -1,24 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CompanyModal from './company-update';
-import { ICompany } from '../../model/company.model';
-import CompanyDetail from './company-detail';
-import CompanyDelete from './company-delete';
+import { IValuelist } from '../../model/valuelist.model';
+import ValuelistModal from './valuelist-update';
+import ValuelistDetail from './valuelist-detail';
+import ValuelistDelete from './valuelist-delete';
 import { IRootState } from '../../model/root-state';
-import { getEntities } from './company.reducer';
-import { get } from 'lodash';
+import { getEntities } from './valuelist.reducer';
 
-const Company: React.FC = () => {
+const Valuelist: React.FC = () => {
   const dispatch = useDispatch();
-  const companies = useSelector((state: IRootState) => state.company.companies);
-  const totalPages = useSelector((state: IRootState) => state.company.totalPages);
-  const activePage = useSelector((state: IRootState) => state.company.page);
-  const [company, setCompany] = useState<ICompany | null>(null);
+  const valuelists = useSelector((state: IRootState) => state.valuelist.valuelists);
+  const totalPages = useSelector((state: IRootState) => state.valuelist.totalPages);
+  const activePage = useSelector((state: IRootState) => state.valuelist.page);
 
   useEffect(() => {
-    dispatch(getEntities(0));
+    dispatch(getEntities());
   }, [dispatch]);
 
+  const [valuelist, setValuelist] = useState<IValuelist | null>(null);
 
   const handlePagination = (page: number) => {
     dispatch(getEntities(page));
@@ -30,17 +29,17 @@ const Company: React.FC = () => {
         <div className="container-fluid">
           <div className="row">
             <div className="col-sm-6">
-              <h3 className="mb-0">Empresas</h3>
+              <h3 className="mb-0">Valuelists</h3>
             </div>
             <div className="col-sm-6 text-end">
               <button
                 type="button"
                 className="btn btn-primary"
                 data-bs-toggle="modal"
-                data-bs-target="#companyUpdateModal"
-                onClick={() => setCompany(null)}
+                data-bs-target="#valuelistUpdateModal"
+                onClick={() => setValuelist(null)}
               >
-                Crear nuevo empresa
+                Crear nuevo valuelist
               </button>
             </div>
           </div>
@@ -51,15 +50,14 @@ const Company: React.FC = () => {
           <thead>
             <tr>
               <th>Acciones</th>
-              <th>name</th>
-              <th>rfc</th>
-              <th>taxRegime</th>
-              <th>taxRegistrationNo</th>
-              <th>taxResidence</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>English Label</th>
+              <th>Spanish Label</th>
             </tr>
           </thead>
           <tbody>
-            {companies && companies.map((company, i) => (
+            {valuelists && valuelists.map((valuelist, i) => (
               <tr key={`entity-${i}`} className="align-middle">
                 <td style={{ width: '10px' }}>
                   <div className="btn-group mb-2" role="group" aria-label="Basic outlined example">
@@ -67,8 +65,8 @@ const Company: React.FC = () => {
                         type="button"
                         className="btn btn-outline-primary"
                         data-bs-toggle="modal"
-                        data-bs-target="#companyUpdateModal"
-                        onClick={() => setCompany(company)}
+                        data-bs-target="#valuelistUpdateModal"
+                        onClick={() => setValuelist(valuelist)}
                         title="Editar"
                       >
                         <i className="bi bi-pencil-square"></i>
@@ -77,8 +75,8 @@ const Company: React.FC = () => {
                       type="button"
                       className="btn btn-outline-secondary"
                       data-bs-toggle="modal"
-                      data-bs-target="#companyDetailModal"
-                      onClick={() => setCompany(company)}
+                      data-bs-target="#valuelistDetailModal"
+                      onClick={() => setValuelist(valuelist)}
                       title="Ver"
                     >
                       <i className="bi bi-eye"></i>
@@ -87,19 +85,18 @@ const Company: React.FC = () => {
                       type="button"
                       className="btn btn-outline-danger"
                       data-bs-toggle="modal"
-                      data-bs-target="#companyDeleteModal"
-                      onClick={() => setCompany(company)}
+                      data-bs-target="#valuelistDeleteModal"
+                      onClick={() => setValuelist(valuelist)}
                       title="Eliminar"
                     >
                       <i className="bi bi-trash3"></i>
                     </button>
                   </div>
                 </td>
-                <td>{company.name}</td>
-                <td>{company.rfc}</td>
-                <td>{get(company.taxRegime, 'name', '')}</td>
-                <td>{company.taxRegistrationNo}</td>
-                <td>{get(company.taxResidence, 'name', '')}</td>
+                <td>{valuelist.type}</td>
+                <td>{valuelist.name}</td>
+                <td>{valuelist.enLabel}</td>
+                <td>{valuelist.esLabel}</td>
               </tr>
             ))}
           </tbody>
@@ -122,11 +119,11 @@ const Company: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <CompanyModal company={company} refresh={() => {dispatch(getEntities());} } />
-      <CompanyDetail company={company} />
-      <CompanyDelete company={company} refresh={() => {dispatch(getEntities());} } />
+      <ValuelistModal valuelist={valuelist} refresh={() => {dispatch(getEntities());} } />
+      <ValuelistDetail valuelist={valuelist} />
+      <ValuelistDelete valuelist={valuelist} refresh={() => {dispatch(getEntities());} } />
     </div>
   );
 };
 
-export default Company;
+export default Valuelist;
