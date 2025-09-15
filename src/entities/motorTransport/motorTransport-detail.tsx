@@ -20,7 +20,7 @@ const MotorTransportDetail: React.FC<MotorTransportDetailProps> = ({ motorTransp
                         </tr>
                         <tr>
                             <td>Configuración</td>
-                            <td>{motorTransport?.configuration}</td>
+                            <td>{typeof motorTransport?.configuration === 'object' ? motorTransport?.configuration.name : ''}</td>
                         </tr>
                         <tr className="align-middle">
                             <td>Placa</td>
@@ -36,7 +36,7 @@ const MotorTransportDetail: React.FC<MotorTransportDetailProps> = ({ motorTransp
                         </tr>
                         <tr className="align-middle">
                             <td>Permiso SCT</td>
-                            <td>{motorTransport?.sctPermit}</td>
+                            <td>{typeof motorTransport?.sctPermit === 'object' ? motorTransport?.sctPermit.name : ''}</td>
                         </tr>
                         <tr className="align-middle">
                             <td>Número de permiso SCT</td>
@@ -52,7 +52,7 @@ const MotorTransportDetail: React.FC<MotorTransportDetailProps> = ({ motorTransp
                         </tr>
                         <tr className="align-middle">
                             <td>Tipo de remolque</td>
-                            <td>{motorTransport?.trailerType}</td>
+                            <td>{typeof motorTransport?.trailerType === 'object' ? motorTransport?.trailerType.name : ''}</td>
                         </tr>
                         <tr className="align-middle">
                             <td>Placa del remolque</td>
@@ -60,7 +60,7 @@ const MotorTransportDetail: React.FC<MotorTransportDetailProps> = ({ motorTransp
                         </tr>
                         <tr className="align-middle">
                             <td>Operador</td>
-                            <td>{motorTransport?.operator}</td>
+                            <td>{typeof motorTransport?.operator === 'object' ? motorTransport?.operator.name : ''}</td>
                         </tr>
                     </tbody>
                 </table>

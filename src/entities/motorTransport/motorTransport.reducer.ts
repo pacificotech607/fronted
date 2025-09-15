@@ -48,9 +48,9 @@ const motorTransportReducer = (state: MotorTransportState = initialState, action
       return {
         ...state,
         loading: false,
-        motorTransports: action.payload.data.docs,
-        totalPages: action.payload.data.totalPages,
-        page: action.payload.data.page,
+        motorTransports: action.payload.data.data.docs,
+        totalPages: action.payload.data.data.totalPages,
+        page: action.payload.data.data.page,
       };
     case `${ACTION_TYPES.FETCH_MOTORTRANSPORT}_FULFILLED`:
       return {

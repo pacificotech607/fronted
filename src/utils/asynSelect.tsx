@@ -29,7 +29,6 @@ const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultV
 
     const handleChange = (selectedOption: any) => {
         if (onChange) {
-            // Retorna el objeto completo que fue seleccionado.
             onChange(selectedOption);
         }
     };
@@ -43,8 +42,7 @@ const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultV
             placeholder={`Selecciona un/a ${entityName}...`}
             noOptionsMessage={() => "No se encontraron resultados"}
             isClearable
-            // Prop para manejar el valor por defecto para edición
-            defaultValue={defaultValue ? {
+            defaultValue={defaultValue && typeof defaultValue === 'object' ? {
                 label: defaultValue[labelField],
                 value: defaultValue._id,
                 ...defaultValue

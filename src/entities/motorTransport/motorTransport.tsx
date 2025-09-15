@@ -6,7 +6,7 @@ import MotorTransportDetail from './motorTransport-detail';
 import MotorTransportDelete from './motorTransport-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './motorTransport.reducer';
-
+import { get } from  'lodash';
 const MotorTransport: React.FC = () => {
   const dispatch = useDispatch();
   const motorTransports = useSelector((state: IRootState) => state.motorTransport.motorTransports);
@@ -102,17 +102,17 @@ const MotorTransport: React.FC = () => {
                   </div>
                 </td>
                 <td>{motorTransport.number}</td>
-                <td>{motorTransport.configuration}</td>
+                <td>{get(motorTransport.configuration, 'name')}</td>
                 <td>{motorTransport.plate}</td>
                 <td>{motorTransport.year}</td>
                 <td>{motorTransport.weight}</td>
-                <td>{motorTransport.sctPermit}</td>
+                <td>{get(motorTransport.sctPermit,'name')}</td>
                 <td>{motorTransport.sctPermitNumber}</td>
                 <td>{motorTransport.insurance}</td>
                 <td>{motorTransport.insurancePolicy}</td>
-                <td>{motorTransport.trailerType}</td>
+                <td>{get(motorTransport.trailerType,'name')}</td>
                 <td>{motorTransport.trailerPlate}</td>
-                <td>{motorTransport.operator}</td>
+                <td>{get(motorTransport.operator, 'name')}</td>
               </tr>
             ))}
           </tbody>

@@ -1,8 +1,9 @@
 import { IMotorTransport } from '../../model/motorTransport.model';
 import GenericModal from '../../utils/Modal';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import AsyncSelectInput from '../../utils/asynSelect';
 import { createEntity, updateEntity } from './motorTransport.reducer';
 
 type MotorTransportUpdateProps = {
@@ -18,6 +19,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
     handleSubmit,
     reset,
     clearErrors,
+    control
   } = useForm<IMotorTransport>({
     mode: 'onSubmit',
   });
@@ -63,13 +65,19 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
               </div>
               <div className="col-md-6">
                 <label htmlFor="configurationInput" className="form-label">Configuración</label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.configuration ? 'is-invalid' : ''}`}
-                  id="configurationInput"
-                  {...register('configuration', {
-                    required: 'La configuración es obligatoria.',
-                  })}
+                <Controller
+                  name="configuration"
+                  control={control}
+                  rules={{ required: 'La configuración es obligatoria.' }}
+                  render={({ field }) => (
+                    <AsyncSelectInput
+                      entityName="valuelists"
+                      labelField="name"
+                      onChange={(value) => field.onChange(value._id)}
+                      defaultValue={motorTransport?.configuration}
+                      isRequired
+                    />
+                  )}
                 />
                 {errors.configuration && <div className="invalid-feedback">{errors.configuration.message}</div>}
               </div>
@@ -115,13 +123,19 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
               </div>
               <div className="col-md-6">
                 <label htmlFor="sctPermitInput" className="form-label">Permiso SCT</label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.sctPermit ? 'is-invalid' : ''}`}
-                  id="sctPermitInput"
-                  {...register('sctPermit', {
-                    required: 'El permiso SCT es obligatorio.',
-                  })}
+                <Controller
+                  name="sctPermit"
+                  control={control}
+                  rules={{ required: 'El permiso SCT es obligatorio.' }}
+                  render={({ field }) => (
+                    <AsyncSelectInput
+                      entityName="valuelists"
+                      labelField="name"
+                      onChange={(value) => field.onChange(value._id)}
+                      defaultValue={motorTransport?.sctPermit}
+                      isRequired
+                    />
+                  )}
                 />
                 {errors.sctPermit && <div className="invalid-feedback">{errors.sctPermit.message}</div>}
               </div>
@@ -167,13 +181,19 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
               </div>
               <div className="col-md-6">
                 <label htmlFor="trailerTypeInput" className="form-label">Tipo de remolque</label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.trailerType ? 'is-invalid' : ''}`}
-                  id="trailerTypeInput"
-                  {...register('trailerType', {
-                    required: 'El tipo de remolque es obligatorio.',
-                  })}
+                <Controller
+                  name="trailerType"
+                  control={control}
+                  rules={{ required: 'El tipo de remolque es obligatorio.' }}
+                  render={({ field }) => (
+                    <AsyncSelectInput
+                      entityName="valuelists"
+                      labelField="name"
+                      onChange={(value) => field.onChange(value._id)}
+                      defaultValue={motorTransport?.trailerType}
+                      isRequired
+                    />
+                  )}
                 />
                 {errors.trailerType && <div className="invalid-feedback">{errors.trailerType.message}</div>}
               </div>
@@ -193,13 +213,19 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
               </div>
               <div className="col-md-6">
                 <label htmlFor="operatorInput" className="form-label">Operador</label>
-                <input
-                  type="text"
-                  className={`form-control ${errors.operator ? 'is-invalid' : ''}`}
-                  id="operatorInput"
-                  {...register('operator', {
-                    required: 'El operador es obligatorio.',
-                  })}
+                <Controller
+                  name="operator"
+                  control={control}
+                  rules={{ required: 'El operador es obligatorio.' }}
+                  render={({ field }) => (
+                    <AsyncSelectInput
+                      entityName="operators"
+                      labelField="name"
+                      onChange={(value) => field.onChange(value._id)}
+                      defaultValue={motorTransport?.operator}
+                      isRequired
+                    />
+                  )}
                 />
                 {errors.operator && <div className="invalid-feedback">{errors.operator.message}</div>}
               </div>
