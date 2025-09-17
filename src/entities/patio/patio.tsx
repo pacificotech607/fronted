@@ -6,6 +6,7 @@ import PatioDetail from './patio-detail';
 import PatioDelete from './patio-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './patio.reducer';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const Patio: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,10 +19,20 @@ const Patio: React.FC = () => {
   }, [dispatch]);
 
   const [patio, setPatio] = useState<IPatio | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
 
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    setSearchQuery(query);
+    dispatch(getEntities(0, 20, query || undefined));
+  };
+
+  const searchOptions = [
+    { value: 'name', label: 'Nombre' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +57,12 @@ const Patio: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
