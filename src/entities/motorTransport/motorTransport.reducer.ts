@@ -100,10 +100,13 @@ const apiUrl = 'api/motor-transports';
 
 // Actions
 
-export const getEntities = (page?: number, size?: number) => ({
-  type: ACTION_TYPES.FETCH_MOTORTRANSPORTS,
-  payload: axios.get<IMotorTransport>(`${apiUrl}?page=${page || 0}&size=${size || 20}`),
-});
+export const getEntities = (page?: number, size?: number, query?: string) => {
+  const requestUrl = `${apiUrl}?page=${page || 0}&size=${size || 20}${query ? `&query=${query}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_MOTORTRANSPORTS,
+    payload: axios.get<IMotorTransport>(requestUrl),
+  };
+};
 
 export const getEntity = (id: string) => ({
   type: ACTION_TYPES.FETCH_MOTORTRANSPORT,

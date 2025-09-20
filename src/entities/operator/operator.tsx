@@ -6,22 +6,49 @@ import OperatorDetail from './operator-detail';
 import OperatorDelete from './operator-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './operator.reducer';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const Operator: React.FC = () => {
   const dispatch = useDispatch();
   const operators = useSelector((state: IRootState) => state.operator.operators);
   const totalPages = useSelector((state: IRootState) => state.operator.totalPages);
   const activePage = useSelector((state: IRootState) => state.operator.page);
+  const [operator, setOperator] = useState<IOperator | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities());
-  }, [dispatch]);
-
-  const [operator, setOperator] = useState<IOperator | null>(null);
+    dispatch(getEntities(0, 20, searchQuery || undefined));
+  }, [dispatch, searchQuery]);
 
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'name', label: 'Nombre' },
+    { value: 'license', label: 'Licencia' },
+    { value: 'rfc', label: 'RFC' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +73,12 @@ const Operator: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -119,9 +152,9 @@ const Operator: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <OperatorUpdate operator={operator} refresh={() => {dispatch(getEntities());} } />
+      <OperatorUpdate operator={operator} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <OperatorDetail operator={operator} />
-      <OperatorDelete operator={operator} refresh={() => {dispatch(getEntities());} } />
+      <OperatorDelete operator={operator} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

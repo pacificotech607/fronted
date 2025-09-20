@@ -6,22 +6,50 @@ import ValuelistDetail from './valuelist-detail';
 import ValuelistDelete from './valuelist-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './valuelist.reducer';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const Valuelist: React.FC = () => {
   const dispatch = useDispatch();
   const valuelists = useSelector((state: IRootState) => state.valuelist.valuelists);
   const totalPages = useSelector((state: IRootState) => state.valuelist.totalPages);
   const activePage = useSelector((state: IRootState) => state.valuelist.page);
+  const [valuelist, setValuelist] = useState<IValuelist | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities());
+    dispatch(getEntities(0, 20, searchQuery || undefined));
   }, [dispatch]);
 
-  const [valuelist, setValuelist] = useState<IValuelist | null>(null);
-
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'type', label: 'Type' },
+    { value: 'name', label: 'Name' },
+    { value: 'enLabel', label: 'English Label' },
+    { value: 'esLabel', label: 'Spanish Label' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +74,12 @@ const Valuelist: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -119,9 +153,9 @@ const Valuelist: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <ValuelistModal valuelist={valuelist} refresh={() => {dispatch(getEntities());} } />
+      <ValuelistModal valuelist={valuelist} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <ValuelistDetail valuelist={valuelist} />
-      <ValuelistDelete valuelist={valuelist} refresh={() => {dispatch(getEntities());} } />
+      <ValuelistDelete valuelist={valuelist} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

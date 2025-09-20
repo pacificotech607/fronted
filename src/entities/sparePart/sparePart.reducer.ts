@@ -100,10 +100,13 @@ const apiUrl = 'api/spare-parts';
 
 // Actions
 
-export const getEntities = (page?: number, size?: number) => ({
-  type: ACTION_TYPES.FETCH_SPAREPARTS,
-  payload: axios.get<ISparePart>(`${apiUrl}?page=${page || 0}&size=${size || 20}`),
-});
+export const getEntities = (page?: number, size?: number, query?: string) => {
+  const requestUrl = `${apiUrl}?page=${page || 0}&size=${size || 20}${query ? `&query=${query}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_SPAREPARTS,
+    payload: axios.get<ISparePart>(requestUrl),
+  };
+};
 
 export const getEntity = (id: string) => ({
   type: ACTION_TYPES.FETCH_SPAREPART,

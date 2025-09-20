@@ -6,22 +6,49 @@ import UserDetail from './user-detail';
 import UserDelete from './user-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './user.reducer';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const User: React.FC = () => {
   const dispatch = useDispatch();
   const users = useSelector((state: IRootState) => state.user.users);
   const totalPages = useSelector((state: IRootState) => state.user.totalPages);
   const activePage = useSelector((state: IRootState) => state.user.page);
+  const [user, setUser] = useState<IUser | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities());
+    dispatch(getEntities(0, 20, searchQuery || undefined));
   }, [dispatch]);
 
-  const [user, setUser] = useState<IUser | null>(null);
-
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'user', label: 'Usuario' },
+    { value: 'email', label: 'Correo' },
+    { value: 'workstation', label: 'Puesto' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +73,12 @@ const User: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -117,9 +150,9 @@ const User: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <UserModal user={user} refresh={() => {dispatch(getEntities());} } />
+      <UserModal user={user} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <UserDetail user={user} />
-      <UserDelete user={user} refresh={() => {dispatch(getEntities());} } />
+      <UserDelete user={user} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

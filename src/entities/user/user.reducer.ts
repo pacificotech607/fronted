@@ -100,10 +100,13 @@ const apiUrl = 'api/users';
 
 // Actions
 
-export const getEntities = (page?: number, size?: number) => ({
-  type: ACTION_TYPES.FETCH_USERS,
-  payload: axios.get<IUser>(`${apiUrl}?page=${page || 0}&size=${size || 20}`),
-});
+export const getEntities = (page?: number, size?: number, query?: string) => {
+  const requestUrl = `${apiUrl}?page=${page || 0}&size=${size || 20}${query ? `&query=${query}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_USERS,
+    payload: axios.get<IUser>(requestUrl),
+  };
+};
 
 export const getEntity = (id: string) => ({
   type: ACTION_TYPES.FETCH_USER,

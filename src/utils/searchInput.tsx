@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 
 interface GenericMultiTagSearchProps {
-  searchOptions: { value: string; label: string }[];
-  onSearchButtonClick: (query: string | null) => void;
+    searchOptions: { value: string; label: string }[];
+    onSearchButtonClick: (query: string | null) => void;
+    permanentFilters?: { label: string }[];
 }
 
 interface Filter {
-  field: string;
-  value: string;
-  label: string;
+    field: string;
+    value: string;
+    label: string;
 }
 
 const GenericMultiTagSearch = ({ searchOptions, onSearchButtonClick }: GenericMultiTagSearchProps) => {
@@ -60,43 +61,45 @@ const GenericMultiTagSearch = ({ searchOptions, onSearchButtonClick }: GenericMu
     };
 
     return (
-<div>
-            <div className="row g-3">
-                <div className="col-md-4">
-                                    <select 
-                    onChange={e => setSelectedField(e.target.value)} 
-                    value={selectedField}
-                    style={{
-                        backgroundColor: '#0d6efd',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        appearance: 'none',
-                        WebkitAppearance: 'none',
-                        MozAppearance: 'none',
-                        backgroundImage: `url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>')`,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 10px center'
-                    }}
-                >
-                    {searchOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
+        <div>
+            <div className="row g-3" style={{ width: '900px' }}>
+                <div className="col-md-3" style={{ marginRight: '0px', paddingRight: '0px' }}>
+                    <select
+                        onChange={e => setSelectedField(e.target.value)}
+                        value={selectedField}
+                        style={{
+                            backgroundColor: '#0d6efd',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            borderTopRightRadius: '0px',
+                            borderEndEndRadius: '0px',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none',
+                            backgroundImage: `url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>')`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'right 10px center'
+                        }}
+                    >
+                        {searchOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
                     </select>
                 </div>
-                <div className="col-md-5">
-                        <input
+                <div className="col-md-6" style={{ marginRight: '0px', paddingRight: '0px', marginLeft: '0px', paddingLeft: '0px' }}>
+                    <input
                         type="text"
                         placeholder="Agregar filtro"
                         value={searchTerm}
                         onChange={handleInputChange}
-                        style={{ height: '50px' }}
+                        style={{ height: '46px', borderRadius: '0px', marginTop: '1px' }}
                     />
                 </div>
-                <div className="col-md-2">
-                    <button style={{ background: '#0d6efd', borderRadius: '10px' }} onClick={handleAddFilter}><i style={{ color: "#fff" }} className="bi bi-search"></i></button>
+                <div className="col-md-2" style={{ marginLeft: '0px', padding: '0px' }}>
+                    <button style={{ borderRadius: '0px', borderEndEndRadius: '10px', borderStartEndRadius: '10px', background: '#0d6efd' }} onClick={handleAddFilter}><i style={{ color: "#fff" }} className="bi bi-search"></i></button>
                 </div>
             </div>
 
@@ -104,8 +107,8 @@ const GenericMultiTagSearch = ({ searchOptions, onSearchButtonClick }: GenericMu
             {/* Lista de tags de filtros activos */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {activeFilters.map((filter, index) => (
-                    <div 
-                        key={index} 
+                    <div
+                        key={index}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -120,7 +123,7 @@ const GenericMultiTagSearch = ({ searchOptions, onSearchButtonClick }: GenericMu
                         }}
                     >
                         <span>{filter.label}</span>
-                        <button 
+                        <button
                             onClick={() => handleRemoveFilter(filter)}
                             style={{
                                 border: 'none',

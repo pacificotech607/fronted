@@ -6,22 +6,49 @@ import SparePartDetail from './sparePart-detail';
 import SparePartDelete from './sparePart-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './sparePart.reducer';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const SparePart: React.FC = () => {
   const dispatch = useDispatch();
   const spareParts = useSelector((state: IRootState) => state.sparePart.spareParts);
   const totalPages = useSelector((state: IRootState) => state.sparePart.totalPages);
   const activePage = useSelector((state: IRootState) => state.sparePart.page);
+  const [sparePart, setSparePart] = useState<ISparePart | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities());
-  }, [dispatch]);
-
-  const [sparePart, setSparePart] = useState<ISparePart | null>(null);
+    dispatch(getEntities(0, 20, searchQuery || undefined));
+  }, [dispatch, searchQuery]);
 
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'description', label: 'Descripción' },
+    { value: 'code', label: 'Código' },
+    { value: 'precio', label: 'Precio' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +73,12 @@ const SparePart: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -117,9 +150,9 @@ const SparePart: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <SparePartModal sparePart={sparePart} refresh={() => {dispatch(getEntities());} } />
+      <SparePartModal sparePart={sparePart} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <SparePartDetail sparePart={sparePart} />
-      <SparePartDelete sparePart={sparePart} refresh={() => {dispatch(getEntities());} } />
+      <SparePartDelete sparePart={sparePart} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

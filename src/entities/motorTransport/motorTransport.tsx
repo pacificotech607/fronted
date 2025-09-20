@@ -7,21 +7,52 @@ import MotorTransportDelete from './motorTransport-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './motorTransport.reducer';
 import { get } from  'lodash';
+import GenericMultiTagSearch from '../../utils/searchInput';
+
 const MotorTransport: React.FC = () => {
   const dispatch = useDispatch();
   const motorTransports = useSelector((state: IRootState) => state.motorTransport.motorTransports);
   const totalPages = useSelector((state: IRootState) => state.motorTransport.totalPages);
   const activePage = useSelector((state: IRootState) => state.motorTransport.page);
+  const [motorTransport, setMotorTransport] = useState<IMotorTransport | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities());
-  }, [dispatch]);
-
-  const [motorTransport, setMotorTransport] = useState<IMotorTransport | null>(null);
+    dispatch(getEntities(0, 20, searchQuery || undefined));
+  }, [dispatch, searchQuery]);
 
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'number', label: 'Número' },
+    { value: 'plate', label: 'Placa' },
+    { value: 'sctPermitNumber', label: 'Número de Permiso SCT' },
+    { value: 'insurance', label: 'Aseguradora' },
+    { value: 'insurancePolicy', label: 'Póliza de Seguro' },
+    { value: 'trailerPlate', label: 'Placa del Remolque' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +77,12 @@ const MotorTransport: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -135,9 +172,9 @@ const MotorTransport: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <MotorTransportModal motorTransport={motorTransport} refresh={() => {dispatch(getEntities());} } />
+      <MotorTransportModal motorTransport={motorTransport} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <MotorTransportDetail motorTransport={motorTransport} />
-      <MotorTransportDelete motorTransport={motorTransport} refresh={() => {dispatch(getEntities());} } />
+      <MotorTransportDelete motorTransport={motorTransport} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

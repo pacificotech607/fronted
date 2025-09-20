@@ -14,25 +14,41 @@ const Patio: React.FC = () => {
   const totalPages = useSelector((state: IRootState) => state.patio.totalPages);
   const activePage = useSelector((state: IRootState) => state.patio.page);
 
-  useEffect(() => {
-    dispatch(getEntities());
-  }, [dispatch]);
-
   const [patio, setPatio] = useState<IPatio | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
+
+  useEffect(() => {
+    dispatch(getEntities(0, 20, searchQuery || undefined));
+  }, [dispatch, searchQuery]);
 
   const handlePagination = (page: number) => {
     dispatch(getEntities(page, 20, searchQuery || undefined));
   };
 
   const handleSearch = (query: string | null) => {
-    setSearchQuery(query);
-    dispatch(getEntities(0, 20, query || undefined));
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
   };
 
   const searchOptions = [
     { value: 'name', label: 'Nombre' },
   ];
+
 
   return (
     <div className="app-main">
@@ -130,9 +146,9 @@ const Patio: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <PatioModal patio={patio} refresh={() => {dispatch(getEntities());} } />
+      <PatioModal patio={patio} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <PatioDetail patio={patio} />
-      <PatioDelete patio={patio} refresh={() => {dispatch(getEntities());} } />
+      <PatioDelete patio={patio} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

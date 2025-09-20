@@ -6,22 +6,47 @@ import TabDetail from './tab-detail';
 import TabDelete from './tab-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './tab.reducer';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const Tab: React.FC = () => {
   const dispatch = useDispatch();
   const tabs = useSelector((state: IRootState) => state.tab.tabs);
   const totalPages = useSelector((state: IRootState) => state.tab.totalPages);
   const activePage = useSelector((state: IRootState) => state.tab.page);
+  const [tab, setTab] = useState<ITab | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities());
-  }, [dispatch]);
-
-  const [tab, setTab] = useState<ITab | null>(null);
+    dispatch(getEntities(0, 20, searchQuery || undefined));
+  }, [dispatch, searchQuery]);
 
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'description', label: 'Descripción' },
+  ];
 
   return (
     <div className="app-main">
@@ -46,6 +71,12 @@ const Tab: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -117,9 +148,9 @@ const Tab: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <TabUpdate tab={tab} refresh={() => {dispatch(getEntities());} } />
+      <TabUpdate tab={tab} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <TabDetail tab={tab} />
-      <TabDelete tab={tab} refresh={() => {dispatch(getEntities());} } />
+      <TabDelete tab={tab} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };

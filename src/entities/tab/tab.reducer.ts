@@ -100,10 +100,13 @@ const apiUrl = 'api/tabs';
 
 // Actions
 
-export const getEntities = (page?: number, size?: number) => ({
-  type: ACTION_TYPES.FETCH_TABS,
-  payload: axios.get<ITab>(`${apiUrl}?page=${page || 0}&size=${size || 20}`),
-});
+export const getEntities = (page?: number, size?: number, query?: string) => {
+  const requestUrl = `${apiUrl}?page=${page || 0}&size=${size || 20}${query ? `&query=${query}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_TABS,
+    payload: axios.get<ITab>(requestUrl),
+  };
+};
 
 export const getEntity = (id: string) => ({
   type: ACTION_TYPES.FETCH_TAB,

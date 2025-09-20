@@ -7,6 +7,7 @@ import CompanyDelete from './company-delete';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './company.reducer';
 import { get } from 'lodash';
+import GenericMultiTagSearch from '../../utils/searchInput';
 
 const Company: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,15 +15,42 @@ const Company: React.FC = () => {
   const totalPages = useSelector((state: IRootState) => state.company.totalPages);
   const activePage = useSelector((state: IRootState) => state.company.page);
   const [company, setCompany] = useState<ICompany | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
-    dispatch(getEntities(0));
-  }, [dispatch]);
+    dispatch(getEntities(0, 20, searchQuery || undefined));
+  }, [dispatch, searchQuery]);
 
 
   const handlePagination = (page: number) => {
-    dispatch(getEntities(page));
+    dispatch(getEntities(page, 20, searchQuery || undefined));
   };
+
+  const handleSearch = (query: string | null) => {
+    const aliveFilter = { alive: true };
+    let finalQueryObject: any = aliveFilter;
+
+    if (query) {
+      try {
+        const userQuery = JSON.parse(query);
+        finalQueryObject = {
+          $and: [aliveFilter, userQuery],
+        };
+      } catch (error) {
+        console.error("Failed to parse search query:", error);
+      }
+    }
+
+    const finalQueryString = JSON.stringify(finalQueryObject);
+    setSearchQuery(finalQueryString);
+    dispatch(getEntities(0, 20, finalQueryString));
+  };
+
+  const searchOptions = [
+    { value: 'name', label: 'Nombre' },
+    { value: 'rfc', label: 'RFC' },
+    { value: 'taxRegistrationNo', label: 'Número de Registro Fiscal' },
+  ];
 
   return (
     <div className="app-main">
@@ -47,6 +75,12 @@ const Company: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
+      <div style={{ marginBottom: '20px' }}>
+      <GenericMultiTagSearch
+        searchOptions={searchOptions}
+        onSearchButtonClick={handleSearch}
+      />
+      </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -122,9 +156,9 @@ const Company: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <CompanyModal company={company} refresh={() => {dispatch(getEntities());} } />
+      <CompanyModal company={company} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
       <CompanyDetail company={company} />
-      <CompanyDelete company={company} refresh={() => {dispatch(getEntities());} } />
+      <CompanyDelete company={company} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
     </div>
   );
 };
