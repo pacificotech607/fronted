@@ -1,4 +1,14 @@
+export interface ICommodity {
+  Container?: string;
+  quantity?: number;
+  unitKey?: string;
+  commodity?: string;
+  description?: string;
+  weightKg?: string;
+}
+
 export interface IBLS {
+  _id?: string;
   customer?: string;
   bl?: string;
   vessel?: string;
@@ -11,12 +21,5 @@ export interface IBLS {
   status?: string;
   typeLoad?: string;
   containers?: string[];
-  commodity?: [{
-    Container?: string;
-    quantity?: number;
-    unitKey?: string;
-    commodity?: string;
-    description?: string;
-    weightKg?: string;
-  }];
+  commodity?: ICommodity[];
 }

@@ -4,13 +4,17 @@ interface GenericModalProps {
   id: string;
   title?: string;
   children?: React.ReactNode;
+  size?: 'sm' | 'lg' | 'xl';
 }
 
 const GenericModal: React.FC<GenericModalProps> = ({
   id,
   title = 'Modal',
   children,
+  size,
 }) => {
+  const modalSizeClass = size ? `modal-${size}` : '';
+
   return (
     <div
       className="modal fade"
@@ -19,7 +23,7 @@ const GenericModal: React.FC<GenericModalProps> = ({
       aria-labelledby={`${id}Label`}
       aria-hidden="true"
     >
-      <div className="modal-dialog">
+      <div className={`modal-dialog ${modalSizeClass}`}>
         <div className="modal-content">
           {/* Header */}
           <div className="modal-header">

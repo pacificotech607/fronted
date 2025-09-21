@@ -13,8 +13,8 @@ const BlsDelete: React.FC<BlsDeleteProps> = ({ bl, refresh }) => {
   const dispatch = useDispatch();
 
   const handleDelete = () => {
-    if (bl && bl.bl) {
-      dispatch(deleteEntity(bl.bl));
+    if (bl && bl._id) {
+      dispatch(deleteEntity(bl._id));
       toast.success(`BL ${bl.bl} Eliminado`, {
         position: "top-right",
       });

@@ -120,7 +120,7 @@ export const createEntity = (entity: IBLS) => ({
 
 export const updateEntity = (entity: IBLS) => ({
   type: ACTION_TYPES.UPDATE_BLS,
-  payload: axios.put<IBLS>(`${apiUrl}/${entity.bl}`, entity),
+  payload: axios.put<IBLS>(`${apiUrl}/${entity._id}`, entity),
 });
 
 export const deleteEntity = (id: string) => ({

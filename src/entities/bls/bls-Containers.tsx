@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { useFieldArray, Control } from 'react-hook-form';
+import { useFieldArray, Control, UseFormRegister } from 'react-hook-form';
 
 interface BlsContainersProps {
   control: Control<any>;
+  register: UseFormRegister<any>;
   onNext: () => void;
   onPrev: () => void;
 }
-const BlsContainers: React.FC<BlsContainersProps> = ({ control, onNext, onPrev }) => {
+const BlsContainers: React.FC<BlsContainersProps> = ({ control, onNext, onPrev, register }) => {
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -27,6 +28,13 @@ const BlsContainers: React.FC<BlsContainersProps> = ({ control, onNext, onPrev }
         <h3>Contenedores</h3>
       </div>
       <div className="row g-3 mt-3">
+      <div className="col-md-12">
+          <label htmlFor="typeLoad" className="form-label">Tipo de Carga</label>
+          <select id="typeLoad" className="form-select" {...register("typeLoad")}>
+            <option value="containerized">Contenerizada</option>
+            <option value="loose">Carga Suelta</option>
+          </select>
+        </div>
         <div className="col-md-10">
           <input
             type="text"

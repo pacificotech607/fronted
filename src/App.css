@@ -5598,6 +5598,23 @@ textarea.form-control-lg {
   overflow-y: auto;
 }
 
+/* Hide spinners from number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.form-control[type="text"],
+.form-control[type="number"] {
+  /* Add any specific styles here to ensure they are identical */
+  /* For now, just ensuring the rule exists can help override defaults */
+}
+
 @media (max-width: 575.98px) {
   .modal-fullscreen-sm-down {
     width: 100vw;
@@ -29317,6 +29334,7 @@ label {
 /* ----- ESTILOS PARA INPUTS DE TEXTO Y SELECTS ----- */
 
 input[type="text"],
+input[type="number"],
 input[type="email"],
 select {
   width: 100%;
