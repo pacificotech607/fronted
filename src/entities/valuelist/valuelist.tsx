@@ -18,7 +18,7 @@ const Valuelist: React.FC = () => {
 
   useEffect(() => {
     dispatch(getEntities(0, 20, searchQuery || undefined));
-  }, [dispatch]);
+  }, [dispatch, searchQuery]);
 
   const handlePagination = (page: number) => {
     dispatch(getEntities(page, 20, searchQuery || undefined));

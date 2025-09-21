@@ -1,14 +1,6 @@
 import React from 'react';
 import { Controller, useFieldArray, Control } from 'react-hook-form';
 
-interface commodityItem {
-  cantidad: number;
-  claveUnidad: string;
-  commodity: string;
-  descripcion: string;
-  peso: number;
-}
-
 interface commodityProps {
   control: Control<any>;
   onPrev: () => void;

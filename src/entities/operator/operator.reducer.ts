@@ -96,7 +96,7 @@ const operatorReducer = (state: OperatorState = initialState, action: any): Oper
 
 export default operatorReducer;
 
-const apiUrl = 'api/operators';
+const apiUrl = '/api/operators';
 
 // Actions
 

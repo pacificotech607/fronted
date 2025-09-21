@@ -35,8 +35,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapse, menuItems }) => {
         background: '#4A90E2'
     };
 
-    const mediaQuery = '@media (max-width: 768px)';
-
     const responsiveStyle: React.CSSProperties = {
         transform: collapse ? 'translateX(-100%)' : 'translateX(0)',
     };
