@@ -80,6 +80,7 @@ const ValuelistUpdate: React.FC<ValuelistUpdateProps> = ({ valuelist, refresh })
                   type="text"
                   className={`form-control ${errors.type ? 'is-invalid' : ''}`}
                   id="typeInput"
+                  placeholder="Type"
                   {...register("type", {
                     required: "El type es obligatorio."
                   })}
@@ -92,6 +93,7 @@ const ValuelistUpdate: React.FC<ValuelistUpdateProps> = ({ valuelist, refresh })
                   type="text"
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="nameInput"
+                  placeholder="Name"
                   {...register("name", {
                     required: "El nombre es obligatorio."
                   })}
@@ -104,6 +106,7 @@ const ValuelistUpdate: React.FC<ValuelistUpdateProps> = ({ valuelist, refresh })
                   type="text"
                   className={`form-control ${errors.enLabel ? 'is-invalid' : ''}`}
                   id="enLabelInput"
+                  placeholder="English Label"
                   {...register("enLabel", {
                     required: "El English Label es obligatorio."
                   })}
@@ -116,6 +119,7 @@ const ValuelistUpdate: React.FC<ValuelistUpdateProps> = ({ valuelist, refresh })
                   type="text"
                   className={`form-control ${errors.esLabel ? 'is-invalid' : ''}`}
                   id="esLabelInput"
+                  placeholder="Spanish Label"
                   {...register("esLabel", {
                     required: "El Spanish Label es obligatorio."
                   })}

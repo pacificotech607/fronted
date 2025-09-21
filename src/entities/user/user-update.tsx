@@ -55,6 +55,7 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
                   type="text"
                   className={`form-control ${errors.user ? 'is-invalid' : ''}`}
                   id="userInput"
+                  placeholder="Usuario"
                   {...register('user', {
                     required: 'El nombre de usuario es obligatorio.',
                     minLength: {
@@ -75,6 +76,7 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
                   type="email"
                   className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                   id="emailInput"
+                  placeholder="Correo"
                   {...register('email', {
                     required: 'El correo electrónico es obligatorio.',
                     pattern: {

@@ -62,6 +62,7 @@ const TabUpdate: React.FC<TabUpdateProps> = ({ tab, refresh }) => {
                   type="text"
                   className={`form-control ${errors.description ? 'is-invalid' : ''}`}
                   id="descriptionInput"
+                  placeholder="Descripción"
                   {...register('description', {
                     required: 'La descripción es obligatoria.',
                   })}
@@ -76,6 +77,7 @@ const TabUpdate: React.FC<TabUpdateProps> = ({ tab, refresh }) => {
                   type="text"
                   className={`form-control ${errors.distanceKm ? 'is-invalid' : ''}`}
                   id="distanceKmInput"
+                  placeholder="Distancia (Km)"
                   {...register('distanceKm', {
                     required: 'La distancia es obligatoria.',
                   })}
@@ -88,6 +90,7 @@ const TabUpdate: React.FC<TabUpdateProps> = ({ tab, refresh }) => {
                   type="text"
                   className={`form-control ${errors.dieselConsumed ? 'is-invalid' : ''}`}
                   id="dieselConsumedInput"
+                  placeholder="Diesel consumido"
                   {...register('dieselConsumed', {
                     required: 'El diesel consumido es obligatorio.',
                   })}

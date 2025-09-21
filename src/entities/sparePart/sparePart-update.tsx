@@ -62,6 +62,7 @@ const SparePartUpdate: React.FC<SparePartUpdateProps> = ({ sparePart, refresh })
                   type="text"
                   className={`form-control ${errors.description ? 'is-invalid' : ''}`}
                   id="descriptionInput"
+                  placeholder="Descripción"
                   {...register('description', {
                     required: 'La descripción es obligatoria.',
                   })}
@@ -76,6 +77,7 @@ const SparePartUpdate: React.FC<SparePartUpdateProps> = ({ sparePart, refresh })
                   type="text"
                   className={`form-control ${errors.code ? 'is-invalid' : ''}`}
                   id="codeInput"
+                  placeholder="Código"
                   {...register('code', {
                     required: 'El código es obligatorio.',
                   })}
@@ -88,6 +90,7 @@ const SparePartUpdate: React.FC<SparePartUpdateProps> = ({ sparePart, refresh })
                   type="text"
                   className={`form-control ${errors.price ? 'is-invalid' : ''}`}
                   id="priceInput"
+                  placeholder="Precio"
                   {...register('price', {
                     required: 'El precio es obligatorio.',
                   })}

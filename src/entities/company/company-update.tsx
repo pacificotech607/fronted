@@ -64,6 +64,7 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                     type="text"
                     className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                     id="nameInput"
+                    placeholder="Usuario"
                     {...register("name", {
                       required: "El nombre de usuario es obligatorio.",
                       minLength: {
@@ -84,6 +85,7 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                     type="text"
                     className={`form-control ${errors.rfc ? 'is-invalid' : ''}`}
                     id="rfcInput"
+                    placeholder="RFC"
                     {...register("rfc", {
                       required: "El RFC es obligatorio.",
                       minLength: {
@@ -128,6 +130,7 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                     type="text"
                     className={`form-control ${errors.taxRegistrationNo ? 'is-invalid' : ''}`}
                     id="taxRegistrationNoInput"
+                    placeholder="No. de Registro Tributario"
                     {...register("taxRegistrationNo", {
                       required: "El No. de Registro Tributario es obligatorio.",
                       minLength: {

@@ -62,6 +62,7 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
                   type="text"
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="nameInput"
+                  placeholder="Nombre"
                   {...register('name', {
                     required: 'El nombre es obligatorio.',
                     minLength: {
@@ -78,6 +79,7 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
                   type="text"
                   className={`form-control ${errors.license ? 'is-invalid' : ''}`}
                   id="licenseInput"
+                  placeholder="Licencia"
                   {...register('license', {
                     required: 'La licencia es obligatoria.',
                   })}
@@ -92,6 +94,7 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
                   type="date"
                   className={`form-control ${errors.vigencia ? 'is-invalid' : ''}`}
                   id="vigenciaInput"
+                  placeholder="Vigencia"
                   {...register('vigencia', {
                     required: 'La vigencia es obligatoria.',
                   })}
@@ -104,6 +107,7 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
                   type="text"
                   className={`form-control ${errors.rfc ? 'is-invalid' : ''}`}
                   id="rfcInput"
+                  placeholder="RFC"
                   {...register('rfc', {
                     required: 'El RFC es obligatorio.',
                     pattern: {

@@ -57,6 +57,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.number ? 'is-invalid' : ''}`}
                   id="numberInput"
+                  placeholder="Número"
                   {...register('number', {
                     required: 'El número es obligatorio.',
                   })}
@@ -89,6 +90,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.plate ? 'is-invalid' : ''}`}
                   id="plateInput"
+                  placeholder="Placa"
                   {...register('plate', {
                     required: 'La placa es obligatoria.',
                   })}
@@ -101,6 +103,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.year ? 'is-invalid' : ''}`}
                   id="yearInput"
+                  placeholder="Año"
                   {...register('year', {
                     required: 'El año es obligatorio.',
                   })}
@@ -115,6 +118,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.weight ? 'is-invalid' : ''}`}
                   id="weightInput"
+                  placeholder="Peso"
                   {...register('weight', {
                     required: 'El peso es obligatorio.',
                   })}
@@ -147,6 +151,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.sctPermitNumber ? 'is-invalid' : ''}`}
                   id="sctPermitNumberInput"
+                  placeholder="Número de permiso SCT"
                   {...register('sctPermitNumber', {
                     required: 'El número de permiso SCT es obligatorio.',
                   })}
@@ -159,6 +164,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.insurance ? 'is-invalid' : ''}`}
                   id="insuranceInput"
+                  placeholder="Aseguradora"
                   {...register('insurance', {
                     required: 'La aseguradora es obligatoria.',
                   })}
@@ -173,6 +179,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.insurancePolicy ? 'is-invalid' : ''}`}
                   id="insurancePolicyInput"
+                  placeholder="Póliza de seguro"
                   {...register('insurancePolicy', {
                     required: 'La póliza de seguro es obligatoria.',
                   })}
@@ -205,6 +212,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   type="text"
                   className={`form-control ${errors.trailerPlate ? 'is-invalid' : ''}`}
                   id="trailerPlateInput"
+                  placeholder="Placa del remolque"
                   {...register('trailerPlate', {
                     required: 'La placa del remolque es obligatoria.',
                   })}

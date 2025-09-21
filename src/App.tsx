@@ -12,7 +12,7 @@ import Patio from './entities/patio/patio';
 import Tab from './entities/tab/tab';
 import SparePart from './entities/sparePart/sparePart';
 import Valuelist from './entities/valuelist/valuelist';
-
+import BLS from './entities/bls/bls';
 
 
 
@@ -37,7 +37,7 @@ function App() {
       label: 'Catalogos',
       icon: 'bi bi-archive',
       subMenus: [
-        { label: 'BLs', href: '/index.html' },
+        { label: 'BLs', href: '/bls' },
         { label: 'Empresas', href: '/company' },
         { label: 'Operadores', href: '/operator' },
         { label: 'Tabuladores', href: '/tab' },
@@ -82,6 +82,7 @@ function App() {
             <Route path="/tab" element={<Tab />} />
             <Route path="/sparePart" element={<SparePart />} />
             <Route path="/valuelist" element={<Valuelist />} />
+            <Route path='/bls' element={<BLS />}/>
             {/* Más rutas públicas */}
           </Routes>
         </Router>

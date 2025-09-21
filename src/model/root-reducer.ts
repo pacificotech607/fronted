@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 
+import bls from '../entities/bls/bls.reducer';
 import company from '../entities/company/company.reducer';
 import motorTransport from '../entities/motorTransport/motorTransport.reducer';
 import operator from '../entities/operator/operator.reducer';
@@ -10,6 +11,7 @@ import user from '../entities/user/user.reducer';
 import valuelist from '../entities/valuelist/valuelist.reducer';
 
 const rootReducer = combineReducers({
+  bls,
   company,
   motorTransport,
   operator,

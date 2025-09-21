@@ -1,3 +1,4 @@
+import { BlsState } from '../entities/bls/bls.reducer';
 import { CompanyState } from '../entities/company/company.reducer';
 import { MotorTransportState } from '../entities/motorTransport/motorTransport.reducer';
 import { OperatorState } from '../entities/operator/operator.reducer';
@@ -8,6 +9,7 @@ import { UserState } from '../entities/user/user.reducer';
 import { ValuelistState } from '../entities/valuelist/valuelist.reducer';
 
 export interface IRootState {
+  readonly bls: BlsState;
   readonly company: CompanyState;
   readonly motorTransport: MotorTransportState;
   readonly operator: OperatorState;

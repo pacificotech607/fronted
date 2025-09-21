@@ -66,6 +66,7 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
                   type="text"
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="nameInput"
+                  placeholder="Nombre"
                   {...register("name", {
                     required: "El nombre es obligatorio."
                   })}
