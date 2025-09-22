@@ -1,10 +1,12 @@
 import { IMotorTransport } from '../../model/motorTransport.model';
 import GenericModal from '../../utils/Modal';
 import { useForm, Controller } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AsyncSelectInput from '../../utils/asynSelect';
 import { createEntity, updateEntity } from './motorTransport.reducer';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 type MotorTransportUpdateProps = {
   motorTransport: IMotorTransport | null;
@@ -25,10 +27,24 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
   });
 
   const onSubmit = (data: IMotorTransport) => {
+    const processedData = { ...data };
+
+    // List of fields that could be objects and need to be replaced by their _id
+    const fieldsToProcess: (keyof IMotorTransport)[] = ['configuration', 'sctPermit', 'trailerType', 'operator'];
+
+    fieldsToProcess.forEach(field => {
+      const value = processedData[field];
+      if (typeof value === 'object' && value !== null && '_id' in value) {
+        processedData[field] = (value as any)._id;
+      }
+    });
+
     if (motorTransport) {
-      dispatch(updateEntity(data));
+      dispatch(updateEntity(processedData));
+      reset();
     } else {
-      dispatch(createEntity(data));
+      dispatch(createEntity(processedData));
+            reset();
     }
     refresh();
   };
@@ -60,6 +76,28 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   placeholder="Número"
                   {...register('number', {
                     required: 'El número es obligatorio.',
+                    validate: async number => {
+                      try {
+                        const query = encodeURIComponent(JSON.stringify({ number: number }));
+                        const response = await axios.get<{ data: { docs: IMotorTransport[] } }>(`/api/motor-transports?query=${query}`);
+                        const existing = response.data.data.docs;
+
+                        if (motorTransport && motorTransport._id) {
+                          const isDuplicate = existing.some(p => p._id !== motorTransport._id);
+                          if (isDuplicate) {
+                            return "El número ya existe.";
+                          }
+                        } else {
+                          if (existing.length > 0) {
+                            return "El número ya existe.";
+                          }
+                        }
+                        return true;
+                      } catch (error) {
+                        toast.error("Error al validar el número.");
+                        return "Error al validar el número.";
+                      }
+                    },
                   })}
                 />
                 {errors.number && <div className="invalid-feedback">{errors.number.message}</div>}
@@ -95,21 +133,46 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   placeholder="Placa"
                   {...register('plate', {
                     required: 'La placa es obligatoria.',
+                    validate: async plate => {
+                      try {
+                        const query = encodeURIComponent(JSON.stringify({ plate: plate }));
+                        const response = await axios.get<{ data: { docs: IMotorTransport[] } }>(`/api/motor-transports?query=${query}`);
+                        const existing = response.data.data.docs;
+
+                        if (motorTransport && motorTransport._id) {
+                          const isDuplicate = existing.some(p => p._id !== motorTransport._id);
+                          if (isDuplicate) {
+                            return "La placa ya existe.";
+                          }
+                        } else {
+                          if (existing.length > 0) {
+                            return "La placa ya existe.";
+                          }
+                        }
+                        return true;
+                      } catch (error) {
+                        toast.error("Error al validar la placa.");
+                        return "Error al validar la placa.";
+                      }
+                    },
                   })}
                 />
                 {errors.plate && <div className="invalid-feedback">{errors.plate.message}</div>}
               </div>
               <div className="col-md-6">
                 <label htmlFor="yearInput" className="form-label">Año</label>
-                <input
-                  type="text"
+                <select
                   className={`form-control ${errors.year ? 'is-invalid' : ''}`}
                   id="yearInput"
-                  placeholder="Año"
                   {...register('year', {
                     required: 'El año es obligatorio.',
                   })}
-                />
+                >
+                  <option value="">Seleccione un año</option>
+                  {Array.from(new Array(50), (val, index) => new Date().getFullYear() - index).map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
                 {errors.year && <div className="invalid-feedback">{errors.year.message}</div>}
               </div>
             </div>

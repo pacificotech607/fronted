@@ -15,7 +15,19 @@ const MotorTransport: React.FC = () => {
   const totalPages = useSelector((state: IRootState) => state.motorTransport.totalPages);
   const activePage = useSelector((state: IRootState) => state.motorTransport.page);
   const [motorTransport, setMotorTransport] = useState<IMotorTransport | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
+  const [searchQuery, setSearchQuery] = useState<string | null>(
+    JSON.stringify([
+      { $lookup: { from: 'operators', localField: 'operator', foreignField: '_id', as: 'operator' } },
+      { $unwind: { path: '$operator', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'configuration', foreignField: '_id', as: 'configuration' } },
+      { $unwind: { path: '$configuration', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'sctPermit', foreignField: '_id', as: 'sctPermit' } },
+      { $unwind: { path: '$sctPermit', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'trailerType', foreignField: '_id', as: 'trailerType' } },
+      { $unwind: { path: '$trailerType', preserveNullAndEmptyArrays: true } },
+      { $match: { alive: true } },
+    ])
+  );
 
   useEffect(() => {
     dispatch(getEntities(0, 20, searchQuery || undefined));
@@ -26,21 +38,30 @@ const MotorTransport: React.FC = () => {
   };
 
   const handleSearch = (query: string | null) => {
-    const aliveFilter = { alive: true };
-    let finalQueryObject: any = aliveFilter;
+    const baseQuery = [
+      { $lookup: { from: 'operators', localField: 'operator', foreignField: '_id', as: 'operator' } },
+      { $unwind: { path: '$operator', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'configuration', foreignField: '_id', as: 'configuration' } },
+      { $unwind: { path: '$configuration', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'sctPermit', foreignField: '_id', as: 'sctPermit' } },
+      { $unwind: { path: '$sctPermit', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'trailerType', foreignField: '_id', as: 'trailerType' } },
+      { $unwind: { path: '$trailerType', preserveNullAndEmptyArrays: true } },
+    ];
+
+    let matchStage: any = { $match: { alive: true } };
 
     if (query) {
       try {
         const userQuery = JSON.parse(query);
-        finalQueryObject = {
-          $and: [aliveFilter, userQuery],
-        };
+        matchStage = { $match: { $and: [{ alive: true }, userQuery] } };
       } catch (error) {
-        console.error("Failed to parse search query:", error);
+        console.error('Failed to parse search query:', error);
       }
     }
 
-    const finalQueryString = JSON.stringify(finalQueryObject);
+    const finalQuery = [...baseQuery, matchStage];
+    const finalQueryString = JSON.stringify(finalQuery);
     setSearchQuery(finalQueryString);
     dispatch(getEntities(0, 20, finalQueryString));
   };

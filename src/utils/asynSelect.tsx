@@ -24,6 +24,7 @@ const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultV
     const [listOption, setListOption] = useState<OptionType[]>([]);
     const [defaultOption, setDefaultOption] = useState(null);
 
+
     useEffect(() => {
         if (defaultValue) {
             const option = {
@@ -34,7 +35,11 @@ const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultV
             if (option.value && option.label) {
                 setDefaultOption(option);
             }
+        } else {
+            setDefaultOption(null);
         }
+        // Ensure the parent form is updated without causing crashes.
+        onChange(defaultValue || {});
     }, [defaultValue, labelField]);
 
       const customStyles: StylesConfig = {
@@ -121,14 +126,20 @@ const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultV
         return options;
     };
 
+    const setOnChange = (selectedOption: any) => {
+        setDefaultOption(selectedOption);
+        // Pass the full object, or an empty object to avoid crashes on null.
+        onChange(selectedOption || {});
+    };
+
     return (
         <AsyncSelect
            styles={customStyles} // Asegúrate de pasar los estilos personalizados aquí
             cacheOptions
             defaultOptions={listOption}
             loadOptions={promiseOptions}
-            onChange={onChange}
-            defaultValue={defaultOption}
+            onChange={setOnChange}
+            value={defaultOption}
             required={isRequired}
         />
     );

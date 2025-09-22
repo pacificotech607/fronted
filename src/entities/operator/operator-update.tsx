@@ -1,5 +1,6 @@
 import { IOperator } from '../../model/operator.model';
 import GenericModal from '../../utils/Modal';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -20,29 +21,40 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
     reset,
     clearErrors,
   } = useForm<IOperator>({
-    mode: 'onSubmit',
+    mode: 'onChange',
   });
 
   const onSubmit = (data: IOperator) => {
-    if (operator) {
+    if (operator && operator._id) {
+      // This is an update
       dispatch(updateEntity(data));
       toast.success(`Operador ${data.name} editado`, {
-        position: "top-right",
+        position: 'top-right',
       });
+      refresh();
+      reset();
     } else {
+      // This is a creation
       dispatch(createEntity(data));
-      toast.success(`Pestaña ${data.name} Creado`, {
-        position: "top-right",
+      toast.success(`Operador ${data.name} Creado`, {
+        position: 'top-right',
       });
+      refresh();
+      reset();
     }
-    refresh();
   };
 
   useEffect(() => {
     if (operator) {
       reset(operator);
     } else {
-      reset({});
+      reset({
+        _id: '',
+        name: '',
+        license: '',
+        vigencia: '',
+        rfc: '',
+      });
     }
     clearErrors();
   }, [operator, reset, clearErrors]);
@@ -50,7 +62,7 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
   return (
     <GenericModal
       id="operatorUpdateModal"
-      title="Crear nuevo operador"
+      title={operator && operator._id ? 'Editar Operador' : 'Crear nuevo Operador'}
     >
       <div className="form-container">
         <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
@@ -63,11 +75,31 @@ const OperatorUpdate: React.FC<OperatorUpdateProps> = ({ operator, refresh }) =>
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="nameInput"
                   placeholder="Nombre"
-                  {...register('name', {
-                    required: 'El nombre es obligatorio.',
-                    minLength: {
-                      value: 3,
-                      message: 'El nombre debe tener al menos 3 caracteres.',
+                  {...register("name", {
+                    required: "El nombre es obligatorio.",
+                    validate: async name => {
+                      try {
+                        const query = encodeURIComponent(JSON.stringify({ name: name }));
+                        const response = await axios.get<{ data: { docs: IOperator[] } }>(`/api/operators?query=${query}`);
+                        const existingOperators = response.data.data.docs;
+
+                        if (operator && operator._id) {
+                          // This is an update
+                          const isDuplicate = existingOperators.some(p => p._id !== operator._id);
+                          if (isDuplicate) {
+                            return "El nombre del operador ya existe.";
+                          }
+                        } else {
+                          // This is a creation
+                          if (existingOperators.length > 0) {
+                            return "El nombre del operador ya existe.";
+                          }
+                        }
+                        return true;
+                      } catch (error) {
+                        toast.error("Error al validar el nombre del operador.");
+                        return "Error al validar el nombre del operador.";
+                      }
                     },
                   })}
                 />
