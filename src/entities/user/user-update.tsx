@@ -1,9 +1,10 @@
 import { IUser } from '../../model/user.model';
 import GenericModal from '../../utils/Modal';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createEntity, updateEntity } from './user.reducer';
+import AsyncSelectInput from '../../utils/asynSelect';
 
 type UserUpdateProps = {
   user: IUser | null;
@@ -18,6 +19,7 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
     handleSubmit,
     reset,
     clearErrors,
+    control,
   } = useForm<IUser>({
     mode: 'onSubmit',
   });
@@ -91,18 +93,22 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
             <div className="row g-3">
               <div className="col-md-12">
                 <label htmlFor="selectInput" className="form-label">Puesto</label>
-                <select
-                  className={`form-select ${errors.workstation ? 'is-invalid' : ''}`}
-                  id="selectInput"
-                  {...register('workstation', {
-                    required: 'Por favor, selecciona un puesto.',
-                  })}
-                >
-                  <option value="">Elige...</option>
-                  <option value="desarrollador">Desarrollador</option>
-                  <option value="disenador">Diseñador</option>
-                  <option value="gestor">Gestor de proyectos</option>
-                </select>
+                <Controller
+                  name="workstation"
+                  control={control}
+                  rules={{ required: 'Por favor, selecciona un puesto.' }}
+                  render={({ field }) => (
+                    <AsyncSelectInput
+                      entityName="valuelists"
+                      labelField="esLabel"
+                      searchField="esLabel"
+                      onChange={value => field.onChange(value._id)}
+                      defaultValue={user?.workstation}
+                      initialConditions={encodeURIComponent(JSON.stringify({ type: 'workstation', alive: true }))}
+                      isRequired
+                    />
+                  )}
+                />
                 {errors.workstation && <div className="invalid-feedback">{errors.workstation.message}</div>}
               </div>
             </div>

@@ -1,5 +1,13 @@
 import AsyncSelect from 'react-select/async';
+import { StylesConfig } from 'react-select';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { get } from 'lodash';
+
+interface OptionType {
+    label: string;
+    value: string;
+}
 
 interface AsyncSelectInputProps {
     entityName: string;
@@ -7,47 +15,120 @@ interface AsyncSelectInputProps {
     isRequired?: boolean;
     defaultValue?: any;
     onChange: (value: any) => void;
-    filter?: string;
+    searchField: string;
+    initialConditions?: string;
 }
 
-const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultValue = null, onChange, filter }: AsyncSelectInputProps) => {
-    const fetchOptions = async (inputValue: string) => {
-        try {
-            const response = await axios.get(`api/${entityName}?search=${inputValue}&page=0&size=20${filter || ''}`);
-            const data = response.data.data.docs;
-            
-            return data.map((item: any) => ({
-                label: item[labelField],
-                value: item._id, 
-                ...item
-            }));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return [];
+const AsyncSelectInput = ({ entityName, labelField, isRequired = false, defaultValue = null, onChange, searchField, initialConditions }: AsyncSelectInputProps) => {
+
+    const [listOption, setListOption] = useState<OptionType[]>([]);
+    const [defaultOption, setDefaultOption] = useState(null);
+
+    useEffect(() => {
+        if (defaultValue) {
+            const option = {
+                label: get(defaultValue, labelField),
+                value: get(defaultValue, '_id'),
+                ...defaultValue,
+            };
+            if (option.value && option.label) {
+                setDefaultOption(option);
+            }
         }
+    }, [defaultValue, labelField]);
+
+      const customStyles: StylesConfig = {
+        control: (provided, state) => ({
+            ...provided,
+            // Aumenta el padding vertical para hacer el input más alto
+            paddingTop: '6px', 
+            paddingBottom: '6px',
+            boxShadow: 'none',
+            border: '1px solid #ced4da',
+            '&:hover': {
+                borderColor: '#ced4da',
+            },
+        }),
+        indicatorSeparator: (provided) => ({
+            ...provided,
+            display: 'none',
+        }),
+        dropdownIndicator: (provided) => ({
+            ...provided,
+            color: '#495057',
+        }),
+        input: (provided) => ({
+            ...provided,
+            caretColor: 'transparent',
+        }),
     };
 
-    const handleChange = (selectedOption: any) => {
-        if (onChange) {
-            onChange(selectedOption);
+    const loadData = async () => {
+        const query = initialConditions ? initialConditions : encodeURIComponent(JSON.stringify({}));
+        const response = await axios.get(`api/${entityName}?page=0&size=20&query=${query}`);
+        const data: any[] = get(response, 'data.data.docs', []);
+        const options: any[] = data.map((d: any) => {
+            return {
+                label: get(d, labelField),
+                value: get(d, '_id'),
+                ...d
+            }
+        });
+        setListOption(options);
+    }
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const promiseOptions = async (inputValue: string) => {
+        // Parse the initial conditions from the string, handling a potential empty string
+        let baseConditions = {};
+        if (initialConditions) {
+            try {
+                baseConditions = JSON.parse(decodeURIComponent(initialConditions));
+            } catch (error) {
+                console.error("Error parsing initialConditions:", error);
+            }
         }
+
+        // Create the search condition using searchField and inputValue
+        const searchCondition = {
+            [searchField]: { "$regex": `.*${inputValue}.*`, "$options": "i" }
+        };
+
+        // Combine both conditions into a single query object using $and
+        const combinedQuery = {
+            "$and": [
+                baseConditions,
+                searchCondition
+            ]
+        };
+
+        // Stringify and encode the new combined query for the URL
+        const encodedQuery = encodeURIComponent(JSON.stringify(combinedQuery));
+
+        const response = await axios.get(`api/${entityName}?page=0&size=20&query=${encodedQuery}`);
+        const data: any[] = get(response, 'data.data.docs', []);
+        const options: any[] = data.map((d: any) => {
+            return {
+                label: get(d, labelField),
+                value: get(d, '_id'),
+                ...d
+            }
+        });
+
+        return options;
     };
 
     return (
         <AsyncSelect
+           styles={customStyles} // Asegúrate de pasar los estilos personalizados aquí
             cacheOptions
-            defaultOptions
-            loadOptions={fetchOptions}
-            onChange={handleChange}
-            placeholder={`Selecciona un/a ${entityName}...`}
-            noOptionsMessage={() => "No se encontraron resultados"}
-            isClearable
-            defaultValue={defaultValue && typeof defaultValue === 'object' ? {
-                label: defaultValue[labelField],
-                value: defaultValue._id,
-                ...defaultValue
-            } : null}
-            // Prop para marcar como requerido en formularios
+            defaultOptions={listOption}
+            loadOptions={promiseOptions}
+            onChange={onChange}
+            defaultValue={defaultOption}
             required={isRequired}
         />
     );

@@ -73,9 +73,11 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   render={({ field }) => (
                     <AsyncSelectInput
                       entityName="valuelists"
-                      labelField="name"
+                      labelField="esLabel"
                       onChange={(value) => field.onChange(value._id)}
                       defaultValue={motorTransport?.configuration}
+                      initialConditions={encodeURIComponent(JSON.stringify({ type: 'vehicle_configuration', alive: true }))}
+                      searchField='esLabel'
                       isRequired
                     />
                   )}
@@ -134,9 +136,11 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   render={({ field }) => (
                     <AsyncSelectInput
                       entityName="valuelists"
-                      labelField="name"
+                      labelField="esLabel"
                       onChange={(value) => field.onChange(value._id)}
                       defaultValue={motorTransport?.sctPermit}
+                      initialConditions={encodeURIComponent(JSON.stringify({ type: 'sct-permit', alive: true }))}
+                      searchField='esLabel'
                       isRequired
                     />
                   )}
@@ -195,9 +199,11 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                   render={({ field }) => (
                     <AsyncSelectInput
                       entityName="valuelists"
-                      labelField="name"
+                      labelField="esLabel"
                       onChange={(value) => field.onChange(value._id)}
                       defaultValue={motorTransport?.trailerType}
+                      initialConditions={encodeURIComponent(JSON.stringify({ type: 'trailer-type', alive: true }))}
+                      searchField='esLabel'
                       isRequired
                     />
                   )}
@@ -231,6 +237,8 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                       labelField="name"
                       onChange={(value) => field.onChange(value._id)}
                       defaultValue={motorTransport?.operator}
+                      initialConditions={encodeURIComponent(JSON.stringify({ alive: true }))}
+                      searchField='name'
                       isRequired
                     />
                   )}
@@ -253,7 +261,7 @@ const MotorTransportUpdate: React.FC<MotorTransportUpdateProps> = ({ motorTransp
                 >
                   Cancelar
                 </button>
-                <button type="submit" className="btn btn-primary">Guardar</button>
+                <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
               </div>
             </div>
           </div>

@@ -45,9 +45,9 @@ const SparePart: React.FC = () => {
   };
 
   const searchOptions = [
-    { value: 'description', label: 'Descripción' },
     { value: 'code', label: 'Código' },
     { value: 'precio', label: 'Precio' },
+    { value: 'description', label: 'Descripción' }
   ];
 
   return (
@@ -83,9 +83,9 @@ const SparePart: React.FC = () => {
           <thead>
             <tr>
               <th>Acciones</th>
-              <th>Descripción</th>
               <th>Código</th>
               <th>Precio</th>
+              <th>Descripción</th>
             </tr>
           </thead>
           <tbody>
@@ -125,9 +125,9 @@ const SparePart: React.FC = () => {
                     </button>
                   </div>
                 </td>
-                <td>{sparePart.description}</td>
                 <td>{sparePart.code}</td>
                 <td>{sparePart.price}</td>
+                <td>{sparePart.description}</td>
               </tr>
             ))}
           </tbody>

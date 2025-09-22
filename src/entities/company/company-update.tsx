@@ -1,11 +1,10 @@
 import { ICompany } from '../../model/company.model';
 import GenericModal from '../../utils/Modal';
 import { useForm, Controller } from 'react-hook-form';
-import AsyncSelect from '../../utils/asynSelect';
-import { useEffect, useState } from 'react';
+import AsyncSelectInput from '../../utils/asynSelect';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createEntity, updateEntity } from './company.reducer';
-import { IValuelist } from '../../model/valuelist.model';
 
 type CompanyUpdateProps = {
   company: ICompany | null;
@@ -13,8 +12,6 @@ type CompanyUpdateProps = {
 };
 
 const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
-  const [taxRegime, setTaxRegime] = useState<IValuelist | null>(null);
-  const [taxResidence, setTaxResidence] = useState<IValuelist | null>(null);
   const dispatch = useDispatch();
   const {
     register,
@@ -22,22 +19,16 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
     handleSubmit,
     reset,
     clearErrors,
-    control
+    control,
   } = useForm<ICompany>({
     mode: 'onSubmit',
   });
 
   const onSubmit = (data: ICompany) => {
-    const newCompany: ICompany = {
-      ...data,
-      taxRegime: taxRegime ? taxRegime._id : undefined,
-      taxResidence: taxResidence ? taxResidence._id : undefined,
-    }
-          console.log('data ===============>', data)
     if (company) {
-      dispatch(updateEntity(newCompany));
+      dispatch(updateEntity(data));
     } else {
-      dispatch(createEntity(newCompany));
+      dispatch(createEntity(data));
     }
     refresh();
   };
@@ -109,16 +100,14 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                     control={control}
                     rules={{ required: 'Por favor, selecciona un puesto.' }}
                     render={({ field }) => (
-                      <AsyncSelect
-                        {...field}
+                      <AsyncSelectInput
                         entityName="valuelists"
-                        labelField="name"
-                        filter="&type=taxRegime"
-                        onChange={(value) => {
-                          field.onChange(value);
-                          setTaxRegime(value);
-                        }}
-                        defaultValue={taxRegime}
+                        labelField="esLabel"
+                        searchField="esLabel"
+                        onChange={value => field.onChange(value._id)}
+                        defaultValue={company?.taxRegime}
+                        initialConditions={encodeURIComponent(JSON.stringify({ type: 'tax-regime', alive: true }))}
+                        isRequired
                       />
                     )}
                   />
@@ -153,16 +142,14 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                       control={control}
                       rules={{ required: 'Por favor, selecciona un puesto.' }}
                       render={({ field }) => (
-                        <AsyncSelect
-                          {...field}
+                        <AsyncSelectInput
                           entityName="valuelists"
-                          labelField="name"
-                          filter="&type=taxResidence"
-                          onChange={(value) => {
-                            field.onChange(value);
-                            setTaxResidence(value);
-                          }}
-                          defaultValue={taxResidence}
+                          labelField="esLabel"
+                          searchField="esLabel"
+                          onChange={value => field.onChange(value._id)}
+                          defaultValue={company?.taxResidence}
+                          initialConditions={encodeURIComponent(JSON.stringify({ type: 'tax-residence', alive: true }))}
+                          isRequired
                         />
                       )}
                     />

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createEntity, updateEntity } from './patio.reducer';
+import axios from 'axios';
 
 type PatioUpdateProps = {
   patio: IPatio | null;
@@ -25,17 +26,21 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
 
   const onSubmit = (data: IPatio) => {
     if (patio && patio._id) {
+      // This is an update
       dispatch(updateEntity(data));
       toast.success(`Patio ${data.name} editado`, {
-        position: "top-right",
+        position: 'top-right',
       });
       refresh();
+      reset();
     } else {
+      // This is a creation
       dispatch(createEntity(data));
       toast.success(`Patio ${data.name} Creado`, {
-        position: "top-right",
+        position: 'top-right',
       });
       refresh();
+      reset();
     }
   };
 
@@ -68,7 +73,31 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
                   id="nameInput"
                   placeholder="Nombre"
                   {...register("name", {
-                    required: "El nombre es obligatorio."
+                    required: "El nombre es obligatorio.",
+                    validate: async name => {
+                      try {
+                        const query = encodeURIComponent(JSON.stringify({ name: name }));
+                        const response = await axios.get<{ data: { docs: IPatio[] } }>(`/api/patios?query=${query}`);
+                        const existingPatios = response.data.data.docs;
+
+                        if (patio && patio._id) {
+                          // This is an update
+                          const isDuplicate = existingPatios.some(p => p._id !== patio._id);
+                          if (isDuplicate) {
+                            return "El nombre del patio ya existe.";
+                          }
+                        } else {
+                          // This is a creation
+                          if (existingPatios.length > 0) {
+                            return "El nombre del patio ya existe.";
+                          }
+                        }
+                        return true;
+                      } catch (error) {
+                        toast.error("Error al validar el nombre del patio.");
+                        return "Error al validar el nombre del patio.";
+                      }
+                    },
                   })}
                 />
                 {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
@@ -89,7 +118,9 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
                 >
                   Cancelar
                 </button>
-                <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+                <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">
+                  Guardar
+                </button>
               </div>
             </div>
           </div>

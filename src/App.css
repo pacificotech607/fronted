@@ -29346,8 +29346,6 @@ select {
   color: #333;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
-    /* Importante para el padding y width */
-box-shadow: 0 0 0 2px rgba(122, 140, 153, 0.4);
   }
 
 /* Placeholder */
