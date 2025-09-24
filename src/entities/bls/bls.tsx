@@ -4,6 +4,8 @@ import { IBLS } from '../../model/bls.model';
 import BlsUpdate from './bls-update';
 import BlsDetail from './bls-detail';
 import BlsDelete from './bls-delete';
+import BlsDetailContainer from './bls-detail-container';
+import BlsDetailCommodity from './bls-detail-commodity';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './bls.reducer';
 import GenericMultiTagSearch from '../../utils/searchInput';
@@ -15,6 +17,9 @@ const BLS: React.FC = () => {
   const activePage = useSelector((state: IRootState) => state.bls.page);
 
   const [bl, setBl] = useState<IBLS | null>(null);
+  const [blContainer, setBlContainer] = useState<IBLS | null>(null);
+  const [blsCommodity, setBlsCommodity] = useState<IBLS | null>(null);
+
   const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
 
   useEffect(() => {
@@ -81,12 +86,12 @@ const BLS: React.FC = () => {
         </div>
       </div>
       <div className="app-content" style={{ margin: '10px' }}>
-      <div style={{ marginBottom: '20px' }}>
-      <GenericMultiTagSearch
-        searchOptions={searchOptions}
-        onSearchButtonClick={handleSearch}
-      />
-      </div>
+        <div style={{ marginBottom: '20px' }}>
+          <GenericMultiTagSearch
+            searchOptions={searchOptions}
+            onSearchButtonClick={handleSearch}
+          />
+        </div>
         {<table className="table table-bordered">
           <thead>
             <tr>
@@ -102,6 +107,8 @@ const BLS: React.FC = () => {
               <th>Entrega Vacío</th>
               <th>Estatus</th>
               <th>Tipo de Carga</th>
+              <th>Container</th>
+              <th>Mercancia</th>
             </tr>
           </thead>
           <tbody>
@@ -109,16 +116,16 @@ const BLS: React.FC = () => {
               <tr key={`entity-${i}`} className="align-middle">
                 <td style={{ width: '10px' }}>
                   <div className="btn-group mb-2" role="group" aria-label="Basic outlined example">
-                      <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#blUpdateModal"
-                        onClick={() => setBl(bl)}
-                        title="Editar"
-                      >
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#blUpdateModal"
+                      onClick={() => setBl(bl)}
+                      title="Editar"
+                    >
+                      <i className="bi bi-pencil-square"></i>
+                    </button>
                     <button
                       type="button"
                       className="btn btn-outline-secondary"
@@ -152,6 +159,16 @@ const BLS: React.FC = () => {
                 <td>{bl.emptyDelivery}</td>
                 <td>{bl.status}</td>
                 <td>{bl.typeLoad}</td>
+                <td className='text-center'><button type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#blDetailContainerModal"
+                  onClick={() => setBlContainer(bl)}
+                  title="Ver Contenedores" style={{ background: 'transparent', border: 'none' }}><i className="bi bi-inboxes" style={{ color: '#0dcaf0' }}></i></button></td>
+                <td className='text-center'><button type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#blDetailCommodityModal"
+                  onClick={() => setBlsCommodity(bl)}
+                  title="Ver lista de mercancia" style={{ background: 'transparent', border: 'none' }}><i className="bi bi-inboxes-fill" style={{ color: '#0dcaf0' }}></i></button></td>
               </tr>
             ))}
           </tbody>
@@ -174,9 +191,11 @@ const BLS: React.FC = () => {
           </ul>
         </nav>
       </div>
-      <BlsUpdate bls={bl} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
+      <BlsUpdate bls={bl} refresh={() => { dispatch(getEntities(0, 20, searchQuery || undefined)); }} />
       <BlsDetail bl={bl} />
-      <BlsDelete bl={bl} refresh={() => {dispatch(getEntities(0, 20, searchQuery || undefined));} } />
+      <BlsDelete bl={bl} refresh={() => { dispatch(getEntities(0, 20, searchQuery || undefined)); }} />
+      <BlsDetailContainer bl={blContainer} />
+      <BlsDetailCommodity bl={blsCommodity} />
     </div>
   );
 };
