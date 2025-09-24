@@ -15,33 +15,45 @@ const Company: React.FC = () => {
   const totalPages = useSelector((state: IRootState) => state.company.totalPages);
   const activePage = useSelector((state: IRootState) => state.company.page);
   const [company, setCompany] = useState<ICompany | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
+  const [searchQuery, setSearchQuery] = useState<string | null>(
+    JSON.stringify([
+      { $lookup: { from: 'valuelists', localField: 'taxRegime', foreignField: '_id', as: 'taxRegime' } },
+      { $unwind: { path: '$taxRegime', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'taxResidence', foreignField: '_id', as: 'taxResidence' } },
+      { $unwind: { path: '$taxResidence', preserveNullAndEmptyArrays: true } },
+      { $match: { alive: true } },
+    ])
+  );
 
   useEffect(() => {
     dispatch(getEntities(0, 20, searchQuery || undefined));
   }, [dispatch, searchQuery]);
-
 
   const handlePagination = (page: number) => {
     dispatch(getEntities(page, 20, searchQuery || undefined));
   };
 
   const handleSearch = (query: string | null) => {
-    const aliveFilter = { alive: true };
-    let finalQueryObject: any = aliveFilter;
+    const baseQuery = [
+      { $lookup: { from: 'valuelists', localField: 'taxRegime', foreignField: '_id', as: 'taxRegime' } },
+      { $unwind: { path: '$taxRegime', preserveNullAndEmptyArrays: true } },
+      { $lookup: { from: 'valuelists', localField: 'taxResidence', foreignField: '_id', as: 'taxResidence' } },
+      { $unwind: { path: '$taxResidence', preserveNullAndEmptyArrays: true } },
+    ];
+
+    let matchStage: any = { $match: { alive: true } };
 
     if (query) {
       try {
         const userQuery = JSON.parse(query);
-        finalQueryObject = {
-          $and: [aliveFilter, userQuery],
-        };
+        matchStage = { $match: { $and: [{ alive: true }, userQuery] } };
       } catch (error) {
-        console.error("Failed to parse search query:", error);
+        console.error('Failed to parse search query:', error);
       }
     }
 
-    const finalQueryString = JSON.stringify(finalQueryObject);
+    const finalQuery = [...baseQuery, matchStage];
+    const finalQueryString = JSON.stringify(finalQuery);
     setSearchQuery(finalQueryString);
     dispatch(getEntities(0, 20, finalQueryString));
   };
@@ -131,9 +143,9 @@ const Company: React.FC = () => {
                 </td>
                 <td>{company.name}</td>
                 <td>{company.rfc}</td>
-                <td>{get(company.taxRegime, 'name', '')}</td>
+                <td>{get(company.taxRegime, 'esLabel', '')}</td>
                 <td>{company.taxRegistrationNo}</td>
-                <td>{get(company.taxResidence, 'name', '')}</td>
+                <td>{get(company.taxResidence, 'esLabel', '')}</td>
               </tr>
             ))}
           </tbody>

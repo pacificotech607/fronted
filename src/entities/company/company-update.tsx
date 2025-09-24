@@ -5,6 +5,8 @@ import AsyncSelectInput from '../../utils/asynSelect';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createEntity, updateEntity } from './company.reducer';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 type CompanyUpdateProps = {
   company: ICompany | null;
@@ -21,14 +23,28 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
     clearErrors,
     control,
   } = useForm<ICompany>({
-    mode: 'onSubmit',
+    mode: 'onChange',
   });
 
   const onSubmit = (data: ICompany) => {
+    const processedData = { ...data };
+
+    // List of fields that could be objects and need to be replaced by their _id
+    const fieldsToProcess: (keyof ICompany)[] = ['taxRegime', 'taxResidence'];
+
+    fieldsToProcess.forEach(field => {
+      const value = processedData[field];
+      if (typeof value === 'object' && value !== null && '_id' in value) {
+        processedData[field] = (value as any)._id;
+      }
+    });
+
     if (company) {
-      dispatch(updateEntity(data));
+      dispatch(updateEntity(processedData));
+      reset();
     } else {
-      dispatch(createEntity(data));
+      dispatch(createEntity(processedData));
+            reset();
     }
     refresh();
   };
@@ -50,7 +66,7 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
             <div className="card-body">
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label htmlFor="nameInput" className="form-label">Usuario</label>
+                  <label htmlFor="nameInput" className="form-label">Nombre</label>
                   <input
                     type="text"
                     className={`form-control ${errors.name ? 'is-invalid' : ''}`}
@@ -65,6 +81,30 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                       maxLength: {
                         value: 20,
                         message: "El nombre no puede exceder los 20 caracteres."
+                      },
+                      validate: async name => {
+                        try {
+                          const query = encodeURIComponent(JSON.stringify({ name: name }));
+                          const response = await axios.get<{ data: { docs: ICompany[] } }>(`/api/companies?query=${query}`);
+                          const existing = response.data.data.docs;
+
+                          if (company && company._id) {
+                            // This is an update
+                            const isDuplicate = existing.some(p => p._id !== company._id);
+                            if (isDuplicate) {
+                              return "El nombre de la compañia ya existe.";
+                            }
+                          } else {
+                            // This is a creation
+                            if (existing.length > 0) {
+                              return "El nombre de la compañia ya existe.";
+                            }
+                          }
+                          return true;
+                        } catch (error) {
+                          toast.error("Error al validar el nombre de la compañia.");
+                          return "Error al validar el nombre de la compañia.";
+                        }
                       }
                     })}
                   />
@@ -86,6 +126,30 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                       maxLength: {
                         value: 20,
                         message: "El nombre no puede exceder los 20 caracteres."
+                      },
+                      validate: async rfc => {
+                        try {
+                          const query = encodeURIComponent(JSON.stringify({ rfc: rfc }));
+                          const response = await axios.get<{ data: { docs: ICompany[] } }>(`/api/companies?query=${query}`);
+                          const existing = response.data.data.docs;
+
+                          if (company && company._id) {
+                            // This is an update
+                            const isDuplicate = existing.some(p => p._id !== company._id);
+                            if (isDuplicate) {
+                              return "El rfc de la compañia ya existe.";
+                            }
+                          } else {
+                            // This is a creation
+                            if (existing.length > 0) {
+                              return "El rfc de la compañia ya existe.";
+                            }
+                          }
+                          return true;
+                        } catch (error) {
+                          toast.error("Error al validar el rfc de la compañia.");
+                          return "Error al validar el rfc de la compañia.";
+                        }
                       }
                     })}
                   />
@@ -106,7 +170,7 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                         searchField="esLabel"
                         onChange={value => field.onChange(value._id)}
                         defaultValue={company?.taxRegime}
-                        initialConditions={encodeURIComponent(JSON.stringify({ type: 'tax-regime', alive: true }))}
+                        initialConditions={encodeURIComponent(JSON.stringify({ type: 'tax-Regime', alive: true }))}
                         isRequired
                       />
                     )}
@@ -148,7 +212,7 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                           searchField="esLabel"
                           onChange={value => field.onChange(value._id)}
                           defaultValue={company?.taxResidence}
-                          initialConditions={encodeURIComponent(JSON.stringify({ type: 'tax-residence', alive: true }))}
+                          initialConditions={encodeURIComponent(JSON.stringify({ type: 'tax-Residence', alive: true }))}
                           isRequired
                         />
                       )}
@@ -170,9 +234,11 @@ const CompanyUpdate: React.FC<CompanyUpdateProps> = ({ company, refresh }) => {
                     className="btn btn-danger"
                     type="button"
                   >
-                    Cancel
+                    Cancelar
                   </button>
-                  <button type="submit" className="btn btn-primary">Submit</button>
+                  <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">
+                    Guardar
+                  </button>
                 </div>
               </div>
             </div>

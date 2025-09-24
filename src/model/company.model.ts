@@ -4,7 +4,7 @@ export  interface ICompany {
     _id?: string;
     name?: string;
     rfc?: string;
-    taxRegime?: IValuelist | string;
+    taxRegime?: IValuelist;
     taxRegistrationNo?: string;
-    taxResidence?: IValuelist | string;
+    taxResidence?: IValuelist;
 }
