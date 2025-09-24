@@ -9,6 +9,8 @@ import BlsDetailCommodity from './bls-detail-commodity';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './bls.reducer';
 import GenericMultiTagSearch from '../../utils/searchInput';
+import { blsAggregate,statusBls } from '../../constants/bls.constans';
+import { get } from 'lodash';
 
 const BLS: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,7 +22,12 @@ const BLS: React.FC = () => {
   const [blContainer, setBlContainer] = useState<IBLS | null>(null);
   const [blsCommodity, setBlsCommodity] = useState<IBLS | null>(null);
 
-  const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
+  const [searchQuery, setSearchQuery] = useState<string | null>(
+    JSON.stringify([
+      ...blsAggregate,
+      { $match: { alive: true } },
+    ])
+  );
 
   useEffect(() => {
     dispatch(getEntities(0, 20, searchQuery || undefined));
@@ -31,21 +38,21 @@ const BLS: React.FC = () => {
   };
 
   const handleSearch = (query: string | null) => {
-    const aliveFilter = { alive: true };
-    let finalQueryObject: any = aliveFilter;
+    const baseQuery = blsAggregate;
+
+    let matchStage: any = { $match: { alive: true } };
 
     if (query) {
       try {
         const userQuery = JSON.parse(query);
-        finalQueryObject = {
-          $and: [aliveFilter, userQuery],
-        };
+        matchStage = { $match: { $and: [{ alive: true }, userQuery] } };
       } catch (error) {
-        console.error("Failed to parse search query:", error);
+        console.error('Failed to parse search query:', error);
       }
     }
 
-    const finalQueryString = JSON.stringify(finalQueryObject);
+    const finalQuery = [...baseQuery, matchStage];
+    const finalQueryString = JSON.stringify(finalQuery);
     setSearchQuery(finalQueryString);
     dispatch(getEntities(0, 20, finalQueryString));
   };
@@ -124,6 +131,7 @@ const BLS: React.FC = () => {
                       data-bs-target="#blUpdateModal"
                       onClick={() => setBl(bl)}
                       title="Editar"
+                      disabled={Object.values(statusBls).find(s => s.value === bl.status)?.value !== statusBls.inactive.value}
                     >
                       <i className="bi bi-pencil-square"></i>
                     </button>
@@ -144,6 +152,7 @@ const BLS: React.FC = () => {
                       data-bs-target="#blDeleteModal"
                       onClick={() => setBl(bl)}
                       title="Eliminar"
+                      disabled={Object.values(statusBls).find(s => s.value === bl.status)?.value !== statusBls.inactive.value}
                     >
                       <i className="bi bi-trash3"></i>
                     </button>
@@ -152,14 +161,25 @@ const BLS: React.FC = () => {
                 <td>{bl.customer}</td>
                 <td>{bl.bl}</td>
                 <td>{bl.vessel}</td>
-                <td>{bl.destination}</td>
+                <td>{get(bl.destination, 'esLabel', '')}</td>
                 <td>{bl.petition}</td>
                 <td>{bl.eta}</td>
                 <td>{bl.invoice}</td>
                 <td>{bl.materialOz}</td>
                 <td>{bl.emptyDelivery}</td>
-                <td>{bl.status}</td>
-                <td>{bl.typeLoad}</td>
+                <td>
+                  <span
+                    style={{
+                      backgroundColor: get(Object.values(statusBls).find(s => s.value === bl.status), 'color', 'gray'),
+                      color: 'white',
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                    }}
+                  >
+                    {get(Object.values(statusBls).find(s => s.value === bl.status), 'esLabel', '')}
+                  </span>
+                </td>
+                <td>{get(bl.typeLoad, 'esLabel', '')}</td>
                 <td className='text-center'><button type="button"
                   data-bs-toggle="modal"
                   data-bs-target="#blDetailContainerModal"

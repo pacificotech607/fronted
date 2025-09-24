@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { useFieldArray, Control, UseFormRegister } from 'react-hook-form';
+import { useFieldArray, Control, Controller } from 'react-hook-form';
+import AsyncSelectInput from '../../utils/asynSelect';
+import { IBLS } from '../../model/bls.model';
 
 interface BlsContainersProps {
   control: Control<any>;
-  register: UseFormRegister<any>;
   onNext: () => void;
   onPrev: () => void;
+  bls: IBLS | null;
 }
-const BlsContainers: React.FC<BlsContainersProps> = ({ control, onNext, onPrev, register }) => {
+const BlsContainers: React.FC<BlsContainersProps> = ({ control, onNext, onPrev, bls }) => {
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -28,12 +30,24 @@ const BlsContainers: React.FC<BlsContainersProps> = ({ control, onNext, onPrev, 
         <h3>Contenedores</h3>
       </div>
       <div className="row g-3 mt-3">
-      <div className="col-md-12">
+        <div className="col-md-12">
           <label htmlFor="typeLoad" className="form-label">Tipo de Carga</label>
-          <select id="typeLoad" className="form-select" {...register("typeLoad")}>
-            <option value="containerized">Contenerizada</option>
-            <option value="loose">Carga Suelta</option>
-          </select>
+          <Controller
+            name="typeLoad"
+            control={control}
+            rules={{ required: 'Por favor, selecciona un tipo de carga.' }}
+            render={({ field }) => (
+              <AsyncSelectInput
+                entityName="valuelists"
+                labelField="esLabel"
+                searchField="esLabel"
+                onChange={value => field.onChange(value._id)}
+                defaultValue={bls?.typeLoad}
+                initialConditions={encodeURIComponent(JSON.stringify({ type: 'type-Load', alive: true }))}
+                isRequired
+              />
+            )}
+          />
         </div>
         <div className="col-md-10">
           <input

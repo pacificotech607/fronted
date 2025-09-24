@@ -1,6 +1,6 @@
 import { IBLS } from '../../model/bls.model';
 import GenericModal from '../../utils/Modal';
-
+import { get } from  'lodash';
 type BlsDetailProps = {
     bl: IBLS | null;
 };
@@ -28,7 +28,7 @@ const BlsDetail: React.FC<BlsDetailProps> = ({ bl }) => {
                         </tr>
                         <tr className="align-middle">
                             <td>Destino</td>
-                            <td>{bl?.destination}</td>
+                            <td>{get(bl?.destination, 'esLabel', '')}</td>
                         </tr>
                         <tr className="align-middle">
                             <td>Petición</td>
@@ -56,7 +56,7 @@ const BlsDetail: React.FC<BlsDetailProps> = ({ bl }) => {
                         </tr>
                         <tr className="align-middle">
                             <td>Tipo de Carga</td>
-                            <td>{bl?.typeLoad}</td>
+                            <td>{get(bl?.typeLoad, 'esLabel', '')}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -13,7 +13,7 @@ import Tab from './entities/tab/tab';
 import SparePart from './entities/sparePart/sparePart';
 import Valuelist from './entities/valuelist/valuelist';
 import BLS from './entities/bls/bls';
-
+import AssignPort from './modules/assignPort/assign-port';
 
 
 
@@ -47,7 +47,17 @@ function App() {
         { label: 'Valuelists', href: '/valuelist' }
       ]
     },
-        {
+    {
+      label: 'Asignar unidades a puerto',
+      icon: 'bi bi-thunderbolt',
+      href: '/assignPort'
+    },
+    {
+      label: 'Asignar unidades a viaje',
+      icon: 'bi bi-bus-front-fill',
+      href: '/user'
+    },
+    {
       label: 'Unidades a puerto',
       icon: 'bi bi-truck',
       subMenus: [
@@ -55,7 +65,7 @@ function App() {
         { label: 'Supervision de regreso', href: '/index2.html' }
       ]
     },
-            {
+    {
       label: 'Unidades a viaje',
       icon: 'bi bi-truck-front-fill',
       subMenus: [
@@ -82,7 +92,8 @@ function App() {
             <Route path="/tab" element={<Tab />} />
             <Route path="/sparePart" element={<SparePart />} />
             <Route path="/valuelist" element={<Valuelist />} />
-            <Route path='/bls' element={<BLS />}/>
+            <Route path='/bls' element={<BLS />} />
+            <Route path='/assignPort' element={<AssignPort />} />
             {/* Más rutas públicas */}
           </Routes>
         </Router>

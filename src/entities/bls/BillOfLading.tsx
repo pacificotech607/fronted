@@ -1,13 +1,19 @@
+import { Control, Controller } from "react-hook-form";
+import AsyncSelectInput from "../../utils/asynSelect";
+import { IBLS } from "../../model/bls.model";
+
 interface BillOfLadingProps {
   errors: { [x: string]: any };
   onNext: () => void;
   register: any;
+  control: Control<any>;
+  bls: IBLS | null;
 }
 
-const BillOfLading = ({ errors, onNext, register }: BillOfLadingProps) => {
+const BillOfLading = ({ errors, onNext, register, control, bls }: BillOfLadingProps) => {
   // guía de carga
   return (
-    <form>
+    <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <i className="bi bi-receipt-cutoff" style={{ color: '#0dcaf0', fontSize: '3rem', marginRight: '10px' }}></i>
         <h3>Guía de carga</h3>
@@ -56,16 +62,23 @@ const BillOfLading = ({ errors, onNext, register }: BillOfLadingProps) => {
       <div className="row g-3 mt-3">
         <div className="col-md-4">
           <label htmlFor="destination" className="form-label">Destino</label>
-          <input
-            type="text"
-            className={`form-control ${errors.destination ? 'is-invalid' : ''}`}
-            id="destination"
-            placeholder="Destino"
-            {...register("destination", {
-              required: "Destination is required."
-            })}
+          <Controller
+            name="destination"
+            control={control}
+            rules={{ required: 'Por favor, selecciona un destino.' }}
+            render={({ field }) => (
+              <AsyncSelectInput
+                entityName="valuelists"
+                labelField="esLabel"
+                searchField="esLabel"
+                onChange={value => field.onChange(value._id)}
+                defaultValue={bls?.destination}
+                initialConditions={encodeURIComponent(JSON.stringify({ type: 'bls-destination', alive: true }))}
+                isRequired
+              />
+            )}
           />
-          {errors.destination && <div className="invalid-feedback">{errors.destination.message}</div>}
+          {errors.taxRegime && <div className="invalid-feedback">{errors.taxRegime.message}</div>}
         </div>
         <div className="col-md-4">
           <label htmlFor="petition" className="form-label">Pedimento</label>
@@ -135,29 +148,13 @@ const BillOfLading = ({ errors, onNext, register }: BillOfLadingProps) => {
           {errors.emptyDelivery && <div className="invalid-feedback">{errors.emptyDelivery.message}</div>}
         </div>
       </div>
-      <div className="row g-3 mt-3">
-        <div className="col-md-12">
-          <label htmlFor="status" className="form-label">Status</label>
-          <select
-            className={`form-select ${errors.status ? 'is-invalid' : ''}`}
-            id="status"
-            {...register("status", {
-              required: "Status is required."
-            })}
-          >
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
-          </select>
-          {errors.status && <div className="invalid-feedback">{errors.status.message}</div>}
-        </div>
-      </div>
       <br />
       <div className="row g-3">
         <div className="col-md-12 text-end">
           <button type="submit" className="btn btn-primary" onClick={onNext}>Siguiente</button>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

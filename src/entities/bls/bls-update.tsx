@@ -5,24 +5,25 @@ import GenericModal from '../../utils/Modal';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { createEntity, updateEntity } from './bls.reducer';
-
+import { statusBls } from '../../constants/bls.constans';
 // Importa los componentes de los pasos
 import BillOfLading from './BillOfLading';
 import BlsContainers from './bls-Containers';
 import BlsCommodity from './bls-Commodity';
+import { IValuelist } from '../../model/valuelist.model';
 
 interface FormValues {
   customer?: string;
   bl?: string;
   vessel?: string;
-  destination?: string;
+  destination?: string | IValuelist;
   petition?: string;
   eta?: string;
   invoice?: string;
   materialOz?: string;
   emptyDelivery?: string;
   status?: string;
-  typeLoad?: string;
+  typeLoad?: string | IValuelist;
   BlsContainers?: { numero: string }[];
   commodity?: {
     Container?: string;
@@ -51,10 +52,11 @@ const BlsUpdate: React.FC<BlsUpdateProps> = ({ bls, refresh }) => {
 
   useEffect(() => {
     if (bls) {
-      const { containers, ...restOfBls } = bls;
+      const { containers, commodity, ...restOfBls } = bls;
       reset({
         ...restOfBls,
         BlsContainers: containers ? containers.map(c => ({ numero: c })) : [],
+        commodity: commodity || []
       });
     } else {
       reset({
@@ -79,19 +81,32 @@ const BlsUpdate: React.FC<BlsUpdateProps> = ({ bls, refresh }) => {
   const prevStep = () => setStep(prev => prev - 1);
 
   const onSubmit = (data: FormValues) => {
-    const { BlsContainers, ...rest } = data;
+    const processedData = { ...data };
+
+    const fieldsToProcess: (keyof FormValues)[] = ['destination', 'typeLoad'];
+
+    fieldsToProcess.forEach(field => {
+      const value = processedData[field];
+      if (typeof value === 'object' && value !== null && '_id' in value) {
+        (processedData as any)[field] = (value as any)._id;
+      }
+    });
+
+    const { BlsContainers, ...rest } = processedData;
+
     const finalData = {
       ...rest,
-      containers: BlsContainers?.map(c => c.numero)
+      containers: BlsContainers?.map(c => c.numero),
+      status: statusBls.inactive.value
     };
-    console.log('Datos del formulario:', finalData);
+
     if (bls && bls._id) {
-      dispatch(updateEntity(finalData));
+      dispatch(updateEntity({ ...finalData, _id: bls._id } as any));
       toast.success(`Bl ${finalData.bl} editado`, {
         position: "top-right",
       });
     } else {
-      dispatch(createEntity(finalData));
+      dispatch(createEntity(finalData as any));
       toast.success(`Bl ${finalData.bl} Creado`, {
         position: "top-right",
       });
@@ -125,6 +140,8 @@ const BlsUpdate: React.FC<BlsUpdateProps> = ({ bls, refresh }) => {
             errors={errors}
             onNext={nextStep}
             register={register}
+            control={control}
+            bls={bls}
           />
         );
       case 2:
@@ -133,7 +150,7 @@ const BlsUpdate: React.FC<BlsUpdateProps> = ({ bls, refresh }) => {
             control={control}
             onNext={nextStep}
             onPrev={prevStep}
-            register={register}
+            bls={bls}
           />
         );
       case 3:
