@@ -29270,6 +29270,12 @@ fieldset legend {
   }
 }
 
+@media (max-width: 767.98px) {
+  .app-main {
+    margin-left: 0 !important;
+  }
+}
+
 /*# sourceMappingURL=adminlte.css.map */
 
 .brand-text {

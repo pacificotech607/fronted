@@ -80,7 +80,8 @@ const Valuelist: React.FC = () => {
         onSearchButtonClick={handleSearch}
       />
       </div>
-        {<table className="table table-bordered">
+        <div className="table-responsive">
+          <table className="table table-bordered">
           <thead>
             <tr>
               <th>Acciones</th>
@@ -134,7 +135,8 @@ const Valuelist: React.FC = () => {
               </tr>
             ))}
           </tbody>
-        </table>}
+        </table>
+        </div>
       </div>
       <div className="card-footer d-flex justify-content-center">
         <nav aria-label="Page navigation example">
