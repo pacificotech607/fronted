@@ -14,6 +14,7 @@ import SparePart from './entities/sparePart/sparePart';
 import Valuelist from './entities/valuelist/valuelist';
 import BLS from './entities/bls/bls';
 import AssignPort from './modules/assignPort/assign-port';
+import AssignTrips from './modules/assignTrips/assign-trips';
 
 
 
@@ -55,7 +56,7 @@ function App() {
     {
       label: 'Asignar unidades a viaje',
       icon: 'bi bi-bus-front-fill',
-      href: '/user'
+      href: '/assignTrips'
     },
     {
       label: 'Unidades a puerto',
@@ -94,6 +95,7 @@ function App() {
             <Route path="/valuelist" element={<Valuelist />} />
             <Route path='/bls' element={<BLS />} />
             <Route path='/assignPort' element={<AssignPort />} />
+            <Route path='/assignTrips' element={<AssignTrips />} />
             {/* Más rutas públicas */}
           </Routes>
         </Router>

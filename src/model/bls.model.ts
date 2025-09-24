@@ -16,6 +16,7 @@ export interface IBLS {
   customer?: string;
   bl?: string;
   vessel?: string;
+  origin?: IValuelist;
   destination?: IValuelist;
   petition?: string;
   eta?: string;
@@ -29,4 +30,6 @@ export interface IBLS {
   motorTransport?: IMotorTransport;
   operator?: IOperator;
   dateTimeArrivalPort?: string;
+  departureDate?: string;
+  distanceTraveled?: string;
 }

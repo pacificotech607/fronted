@@ -1,6 +1,7 @@
 export const statusBls = {
     inactive: { value: "inactive", esLabel: "Inactivo", enLabel: "Inactive", color: '#0dcaf0' },
-    assignedPort: { value: "assignedPort", esLabel: "Asignado a puerto", enLabel: "Assigned to port", color: '#fd7e14' }
+    assignedPort: { value: "assignedPort", esLabel: "Asignado a puerto", enLabel: "Assigned to port", color: '#fd7e14' },
+    assignedTrip: { value: "assignedTrip", esLabel: "Asignado a viaje", enLabel: "Assigned to trip", color: '#ffc107' }
 }
 
 export const blsAggregate = [
@@ -60,6 +61,65 @@ export const blsAggregateAssignPort = [
     {
         $unwind: {
             path: '$motorTransport',
+            preserveNullAndEmptyArrays: true
+        }
+    }
+];
+
+export const blsAggregateAssignTrip = [
+    {
+        $lookup: {
+            from: 'operators',
+            localField: 'operator',
+            foreignField: '_id',
+            as: 'operator'
+        }
+    },
+    {
+        $unwind: {
+            path: '$operator',
+            preserveNullAndEmptyArrays: true
+        }
+    },
+        {
+        $lookup: {
+            from: 'motortransports',
+            localField: 'motorTransport',
+            foreignField: '_id',
+            as: 'motorTransport'
+        }
+    },
+    {
+        $unwind: {
+            path: '$motorTransport',
+            preserveNullAndEmptyArrays: true
+        }
+    },
+            {
+        $lookup: {
+            from: 'valuelists',
+            localField: 'origin',
+            foreignField: '_id',
+            as: 'origin'
+        }
+    },
+    {
+        $unwind: {
+            path: '$origin',
+            preserveNullAndEmptyArrays: true
+        }
+    },
+            {
+        $lookup: {
+            from: 'valuelists',
+            localField: 'destination',
+            foreignField: '_id',
+            as: 'destination'
+        }
+    },
+    {
+        $unwind: {
+            path: '$destination',
             preserveNullAndEmptyArrays: true
         }
     }
