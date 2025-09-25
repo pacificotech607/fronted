@@ -15,6 +15,10 @@ import Valuelist from './entities/valuelist/valuelist';
 import BLS from './entities/bls/bls';
 import AssignPort from './modules/assignPort/assign-port';
 import AssignTrips from './modules/assignTrips/assign-trips';
+import PortExitReview from './modules/portexitreview/port-exit-review';
+import ReturnPort from './modules/returnport/return-port';
+import TripExitReview from './modules/tripexitreview/trip-exit-review';
+import ReturnTrip from './modules/returntrip/return-trip';
 
 
 
@@ -62,16 +66,16 @@ function App() {
       label: 'Unidades a puerto',
       icon: 'bi bi-truck',
       subMenus: [
-        { label: 'Supervision de ida', href: '/index.html' },
-        { label: 'Supervision de regreso', href: '/index2.html' }
+        { label: 'Supervision de ida', href: '/portExitReview' },
+        { label: 'Supervision de regreso', href: '/returnPort' }
       ]
     },
     {
       label: 'Unidades a viaje',
       icon: 'bi bi-truck-front-fill',
       subMenus: [
-        { label: 'Supervision de ida', href: '/index.html' },
-        { label: 'Supervision de regreso', href: '/index2.html' }
+        { label: 'Supervision de ida', href: '/tripExitReview' },
+        { label: 'Supervision de regreso', href: '/returnTrip' }
       ]
     },
   ];
@@ -96,6 +100,11 @@ function App() {
             <Route path='/bls' element={<BLS />} />
             <Route path='/assignPort' element={<AssignPort />} />
             <Route path='/assignTrips' element={<AssignTrips />} />
+            <Route path='/portExitReview' element={<PortExitReview />} />
+            <Route path='/returnPort' element={<ReturnPort />} />
+            <Route path='/tripExitReview' element={<TripExitReview />} />
+            <Route path='/returnTrip' element={<ReturnTrip />} />
+
             {/* Más rutas públicas */}
           </Routes>
         </Router>

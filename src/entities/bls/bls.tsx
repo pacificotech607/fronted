@@ -103,20 +103,20 @@ const BLS: React.FC = () => {
           <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Acciones</th>
-              <th>Cliente</th>
-              <th>BL</th>
-              <th>Buque</th>
-              <th>Destino</th>
-              <th>Petición</th>
-              <th>ETA</th>
-              <th>Factura</th>
-              <th>Onzas de Material</th>
-              <th>Entrega Vacío</th>
-              <th>Estatus</th>
-              <th>Tipo de Carga</th>
-              <th>Container</th>
-              <th>Mercancia</th>
+              <th style={{ minWidth: '150px' }}>Acciones</th>
+              <th style={{ minWidth: '200px' }}>Cliente</th>
+              <th style={{ minWidth: '150px' }}>BL</th>
+              <th style={{ minWidth: '150px' }}>Buque</th>
+              <th style={{ minWidth: '150px' }}>Destino</th>
+              <th style={{ minWidth: '150px' }}>Petición</th>
+              <th style={{ minWidth: '120px' }}>ETA</th>
+              <th style={{ minWidth: '150px' }}>Factura</th>
+              <th style={{ minWidth: '150px' }}>Onzas de Material</th>
+              <th style={{ minWidth: '150px' }}>Entrega Vacío</th>
+              <th style={{ minWidth: '250px' }}>Estatus</th>
+              <th style={{ minWidth: '150px' }}>Tipo de Carga</th>
+              <th style={{ minWidth: '100px' }}>Container</th>
+              <th style={{ minWidth: '100px' }}>Mercancia</th>
             </tr>
           </thead>
           <tbody>
@@ -167,7 +167,7 @@ const BLS: React.FC = () => {
                 <td>{bl.invoice}</td>
                 <td>{bl.materialOz}</td>
                 <td>{bl.emptyDelivery}</td>
-                <td>
+                <td className='text-center'>
                   <span
                     style={{
                       backgroundColor: get(Object.values(statusBls).find(s => s.value === bl.status), 'color', 'gray'),

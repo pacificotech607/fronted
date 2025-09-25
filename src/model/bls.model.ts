@@ -30,6 +30,10 @@ export interface IBLS {
   motorTransport?: IMotorTransport;
   operator?: IOperator;
   dateTimeArrivalPort?: string;
+  dateTimeExitPort?: string;
+  exitPortPhoto?: string;
   departureDate?: string;
   distanceTraveled?: string;
+  exitPhotos?: any[];
+  returnPhotos?: any[];
 }
