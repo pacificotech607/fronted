@@ -58,7 +58,7 @@ const ReturnTripUnit: React.FC<ReturnTripUnitProps> = ({ bls, refresh }) => {
       const entity = {
         ...bls,
         ...data,
-        status: statusBls.returnReview.value,
+        status: statusBls.returnReviewTrip.value,
         returnPhotos: [frontal, rightSide, leftSide, rear]
       };
 
