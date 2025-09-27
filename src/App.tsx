@@ -19,6 +19,7 @@ import PortExitReview from './modules/portexitreview/port-exit-review';
 import ReturnPort from './modules/returnport/return-port';
 import TripExitReview from './modules/tripexitreview/trip-exit-review';
 import ReturnTrip from './modules/returntrip/return-trip';
+import Invoice from './entities/invoice/invoice';
 
 
 
@@ -78,6 +79,13 @@ function App() {
         { label: 'Supervision de regreso', href: '/returnTrip' }
       ]
     },
+    {
+      label: 'Facturación',
+      icon: 'bi bi-receipt-cutoff',
+      subMenus: [
+        { label: 'Factura', href: '/invoice' },
+      ]
+    },
   ];
   const sidebarWidth = collapse ? '60px' : '235px';
 
@@ -104,6 +112,7 @@ function App() {
             <Route path='/returnPort' element={<ReturnPort />} />
             <Route path='/tripExitReview' element={<TripExitReview />} />
             <Route path='/returnTrip' element={<ReturnTrip />} />
+            <Route path="/invoice" element={<Invoice />} />
 
             {/* Más rutas públicas */}
           </Routes>

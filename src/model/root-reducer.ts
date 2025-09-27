@@ -9,6 +9,7 @@ import sparePart from '../entities/sparePart/sparePart.reducer';
 import tab from '../entities/tab/tab.reducer';
 import user from '../entities/user/user.reducer';
 import valuelist from '../entities/valuelist/valuelist.reducer';
+import invoice from '../entities/invoice/invoice.reducer';
 
 const rootReducer = combineReducers({
   bls,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   tab,
   user,
   valuelist,
+  invoice,
 });
 
 export default rootReducer;

@@ -7,6 +7,7 @@ import { SparePartState } from '../entities/sparePart/sparePart.reducer';
 import { TabState } from '../entities/tab/tab.reducer';
 import { UserState } from '../entities/user/user.reducer';
 import { ValuelistState } from '../entities/valuelist/valuelist.reducer';
+import { InvoiceState } from '../entities/invoice/invoice.reducer';
 
 export interface IRootState {
   readonly bls: BlsState;
@@ -18,4 +19,5 @@ export interface IRootState {
   readonly tab: TabState;
   readonly user: UserState;
   readonly valuelist: ValuelistState;
+  readonly invoice: InvoiceState;
 }
