@@ -191,7 +191,7 @@ const InvoiceConcepts: React.FC<InvoiceConceptsProps> = ({ control, onSubmit, on
       <div className="row g-3">
         <div className="col-md-12 text-end">
           <button type="button" style={{ marginRight: '5px' }} className="btn btn-secondary" onClick={onPrev}>Anterior</button>
-          <button type="button" className="btn btn-primary" onClick={onSubmit}>Guardar</button>
+          <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={onSubmit}>Guardar</button>
         </div>
       </div>
     </>

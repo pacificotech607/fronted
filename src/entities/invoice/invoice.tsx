@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { IInvoice } from '../../model/invoice.model';
 import InvoiceUpdate from './invoice-update';
 import InvoiceDetail from './invoice-detail';
@@ -9,11 +10,15 @@ import InvoicesRelatedModal from './invoices-related-modal';
 import { IRootState } from '../../model/root-state';
 import { getEntities } from './invoice.reducer';
 import GenericMultiTagSearch from '../../utils/searchInput';
-import { invoiceAggregate } from '../../constants/invoice.constants';
+import { invoiceAggregate, typeInvoiceOptions } from '../../constants/invoice.constants';
 import { get } from 'lodash';
 
 const Invoice: React.FC = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+    const isCreditNote = location.pathname.includes('/credit-note');
+  const title = isCreditNote ? 'Notas de Crédito' : 'Facturas';
+  const buttonText = isCreditNote ? 'Crear nueva Nota de Crédito' : 'Crear nueva Factura';
   const invoices = useSelector((state: IRootState) => state.invoice.invoices);
   const totalPages = useSelector((state: IRootState) => state.invoice.totalPages);
   const activePage = useSelector((state: IRootState) => state.invoice.page);
@@ -25,7 +30,7 @@ const Invoice: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string | null>(
     JSON.stringify([
       ...invoiceAggregate,
-      { $match: { alive: true } },
+      { $match: { alive: true, typeInvoiceOptions: isCreditNote ? typeInvoiceOptions.CREDIT_NOTE : typeInvoiceOptions.INVOICE, } },
     ])
   );
 
@@ -68,13 +73,15 @@ const Invoice: React.FC = () => {
   ];
 
 
+
+
   return (
     <div className="app-main">
       <div className="app-content-header">
         <div className="container-fluid">
           <div className="row">
             <div className="col-sm-6">
-              <h3 className="mb-0">Facturas</h3>
+              <h3 className="mb-0">{title}</h3>
             </div>
             <div className="col-sm-6 text-end">
               <button
@@ -84,7 +91,7 @@ const Invoice: React.FC = () => {
                 data-bs-target="#invoiceUpdateModal"
                 onClick={() => setInvoice(null)}
               >
-                Crear nueva Factura
+                {buttonText}
               </button>
             </div>
           </div>
@@ -115,7 +122,7 @@ const Invoice: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {invoices && invoices.map((invoice, i) => (
+            {invoices && invoices.map((invoice: IInvoice, i: number) => (
               <tr key={`entity-${i}`} className="align-middle">
                 <td style={{ width: '10px' }}>
                   <div className="btn-group mb-2" role="group" aria-label="Basic outlined example">

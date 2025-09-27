@@ -78,3 +78,8 @@ export const invoiceAggregate = [
     },
   },
 ];
+
+export const typeInvoiceOptions = {
+  INVOICE: "invoice",
+  CREDIT_NOTE: "credit_note",
+};

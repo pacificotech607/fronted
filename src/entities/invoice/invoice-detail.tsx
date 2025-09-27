@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { IInvoice } from '../../model/invoice.model';
 import GenericModal from '../../utils/Modal';
 import { get } from 'lodash';
@@ -8,9 +9,12 @@ type InvoiceDetailProps = {
 };
 
 const InvoiceDetail: React.FC<InvoiceDetailProps> = ({ invoice }) => {
+  const location = useLocation();
+  const isCreditNote = location.pathname.includes('/credit-note');
+  const title = isCreditNote ? 'Detalles de la Nota de Crédito' : 'Detalles de la Factura';
 
   return (
-    <GenericModal id="invoiceDetailModal" title="Detalles de la Factura" size='xl'>
+    <GenericModal id="invoiceDetailModal" title={title} size='xl'>
       <div className="container">
         <div className="row">
           <div className="col-md-6">

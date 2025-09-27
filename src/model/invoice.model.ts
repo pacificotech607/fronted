@@ -11,6 +11,7 @@ export interface IInvoice {
   paymentMethod?: IValuelist;
   currency?: IValuelist;
   exchangeRate: string;
+  typeInvoiceOptions?: string;
   relatedInvoices: Array<{
     relationshipType?: IValuelist;
     invoiceFolio?: string;

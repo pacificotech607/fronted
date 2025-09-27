@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 import { IInvoice } from '../../model/invoice.model';
 import GenericModal from '../../utils/Modal';
 import { toast } from 'react-toastify';
@@ -9,7 +10,8 @@ import { IValuelist } from '../../model/valuelist.model';
 import InvoiceData from './invoice-data';
 import InvoiceRelated from './invoices-related';
 import InvoiceConcepts from './invoice-concepts';
-
+import { typeInvoiceOptions } from '../../constants/invoice.constants';
+import { get } from 'lodash';
 interface FormValues {
   issuing?: IValuelist;
   customer?: string;
@@ -19,6 +21,7 @@ interface FormValues {
   paymentMethod?: IValuelist;
   currency?: IValuelist;
   exchangeRate?: string;
+  typeInvoiceOptions?: string;
   relatedInvoices?: {
     relationshipType?: IValuelist;
     invoiceFolio?: string;
@@ -42,6 +45,11 @@ type InvoiceUpdateProps = {
 
 const InvoiceUpdate: React.FC<InvoiceUpdateProps> = ({ invoice, refresh }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+    const isCreditNote = location.pathname.includes('/credit-note');
+  const title = isCreditNote
+    ? invoice && invoice._id ? 'Editar Nota de Crédito' : 'Crear nueva Nota de Crédito'
+    : invoice && invoice._id ? 'Editar Factura' : 'Crear nueva Factura';
   const [step, setStep] = useState(1);
   const { control, handleSubmit, formState: { errors }, reset, register } = useForm<FormValues>({
     defaultValues: {
@@ -63,6 +71,7 @@ const InvoiceUpdate: React.FC<InvoiceUpdateProps> = ({ invoice, refresh }) => {
         paymentMethod: undefined,
         currency: undefined,
         exchangeRate: '',
+        typeInvoiceOptions: '',
         relatedInvoices: [],
         concepts: [],
       });
@@ -74,10 +83,11 @@ const InvoiceUpdate: React.FC<InvoiceUpdateProps> = ({ invoice, refresh }) => {
 
   const onSubmit = (data: FormValues) => {
     const processedData = { ...data,
-      relatedInvoices: data.relatedInvoices?.map(ri => ({
-        relationshipType: ri.relationshipType?._id,
-        invoiceFolio: ri.invoiceFolio,
+      relatedInvoices: get(data, 'InvoiceRelated', [])?.map(ri => ({
+        relationshipType: get(ri, 'relationshipType._id'),
+        invoiceFolio: get(ri, 'invoiceFolio')
       })),
+      concepts: [...get(data, 'Invoiceconcepts', []) ]
     };
 
     const fieldsToProcess: (keyof FormValues)[] = ['issuing', 'typeReceipt', 'useVoucher', 'methodOfPayment', 'paymentMethod', 'currency'];
@@ -90,12 +100,12 @@ const InvoiceUpdate: React.FC<InvoiceUpdateProps> = ({ invoice, refresh }) => {
     });
 
     if (invoice && invoice._id) {
-      dispatch(updateEntity({ ...processedData, _id: invoice._id } as any));
+      dispatch(updateEntity({ ...processedData, _id: invoice._id,  typeInvoiceOptions: isCreditNote ? typeInvoiceOptions.CREDIT_NOTE : typeInvoiceOptions.INVOICE } as any));
       toast.success(`Factura ${invoice._id} editada`, {
         position: "top-right",
       });
     } else {
-      dispatch(createEntity(processedData as any));
+      dispatch(createEntity({ ...processedData, typeInvoiceOptions: isCreditNote ? typeInvoiceOptions.CREDIT_NOTE : typeInvoiceOptions.INVOICE } as any));
       toast.success(`Factura creada`, {
         position: "top-right",
       });
@@ -107,8 +117,6 @@ const InvoiceUpdate: React.FC<InvoiceUpdateProps> = ({ invoice, refresh }) => {
       typeReceipt: undefined,
       useVoucher: undefined,
       methodOfPayment: undefined,
-      paymentMethod: undefined,
-      currency: undefined,
       exchangeRate: '',
       relatedInvoices: [],
       concepts: [],
@@ -149,10 +157,12 @@ const InvoiceUpdate: React.FC<InvoiceUpdateProps> = ({ invoice, refresh }) => {
     }
   };
 
+
+
   return (
     <GenericModal
       id="invoiceUpdateModal"
-      title={invoice && invoice._id ? 'Editar Factura' : 'Crear nueva Factura'}
+      title={title}
       size="xl"
     >
       <div className="form-container">

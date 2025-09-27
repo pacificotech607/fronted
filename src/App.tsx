@@ -84,6 +84,7 @@ function App() {
       icon: 'bi bi-receipt-cutoff',
       subMenus: [
         { label: 'Factura', href: '/invoice' },
+        { label: 'Nota de crédito', href: '/credit-note' },
       ]
     },
   ];
@@ -113,6 +114,7 @@ function App() {
             <Route path='/tripExitReview' element={<TripExitReview />} />
             <Route path='/returnTrip' element={<ReturnTrip />} />
             <Route path="/invoice" element={<Invoice />} />
+            <Route path="/credit-note" element={<Invoice />} />
 
             {/* Más rutas públicas */}
           </Routes>
