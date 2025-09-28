@@ -3,7 +3,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './layout/header/header';
 import Sidebar from './layout/siderBar/sidebar';
-import { useState } from 'react';
+// import SimpleSidebar from './layout/siderBar/SimpleSidebar';
+// import DebugSidebar from './layout/siderBar/DebugSidebar';
+import { useState, useEffect } from 'react';
 import Company from './entities/company/company';
 import User from './entities/user/user';
 import Operator from './entities/operator/operator';
@@ -32,7 +34,47 @@ interface MenuItem {
 
 // Component to handle navigation after login
 const AppContent = () => {
-  const [collapse, setCollapse] = useState(false);
+  // Initialize collapse state from localStorage, with fallback to false
+  const getInitialCollapseState = () => {
+    const savedState = localStorage.getItem('sidebar-collapsed');
+    if (savedState !== null) {
+      return JSON.parse(savedState);
+    }
+    // Default to false (expanded) for desktop, true (collapsed) for mobile
+    return window.innerWidth <= 768;
+  };
+
+  const [collapse, setCollapse] = useState(getInitialCollapseState);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Function to toggle sidebar and save state to localStorage
+  const toggleSidebar = () => {
+    const newCollapseState = !collapse;
+    setCollapse(newCollapseState);
+    localStorage.setItem('sidebar-collapsed', JSON.stringify(newCollapseState));
+  };
+
+  // Initialize sidebar state based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      const wasMobile = isMobile;
+      setIsMobile(mobile);
+      
+      // Solo forzar collapsed cuando cambiamos de escritorio a móvil
+      // Esto respeta el estado guardado en localStorage
+      if (mobile && !wasMobile) {
+        const newCollapseState = true;
+        setCollapse(newCollapseState);
+        localStorage.setItem('sidebar-collapsed', JSON.stringify(newCollapseState));
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Call once on mount
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobile]); // Agregar isMobile como dependencia para detectar cambios
 
   const menuItems: MenuItem[] = [
     {
@@ -89,7 +131,20 @@ const AppContent = () => {
       ]
     },
   ];
-  const sidebarWidth = collapse ? '60px' : '235px';
+
+  const getSidebarWidth = () => {
+    if (isMobile) {
+      return collapse ? '0px' : '250px'; // En móvil: 0px colapsado, 250px expandido
+    }
+    return collapse ? '70px' : '280px'; // En escritorio: 70px colapsado, 280px expandido
+  };
+
+  const getMainMargin = () => {
+    if (isMobile) {
+      return '0px'; // En móvil, el contenido siempre toma el ancho completo (el sidebar se superpone)
+    }
+    return getSidebarWidth(); // En escritorio, el margen debe coincidir con el ancho del sidebar
+  };
 
   return (
     <Routes>
@@ -98,10 +153,23 @@ const AppContent = () => {
         <Route
           path="/*"
           element={
-            <>
-              <Header onToggleSidebar={() => setCollapse(!collapse)} collapse={collapse} />
+            <div className="app-wrapper">
+              <Header 
+                onToggleSidebar={toggleSidebar} 
+                collapse={collapse} 
+              />
               <Sidebar collapse={collapse} menuItems={menuItems} />
-              <main className="app-main" style={{ marginLeft: sidebarWidth, marginTop: '60px', transition: 'margin-left 0.3s ease' }}>
+              <main 
+                className="app-main"
+                style={{ 
+                  marginLeft: getMainMargin(),
+                  marginTop: '60px',
+                  padding: isMobile ? '1rem 0.5rem' : '1.5rem',
+                  transition: 'margin-left 0.3s ease',
+                  minHeight: 'calc(100vh - 60px)',
+                  backgroundColor: '#f8f9fa'
+                }}
+              >
                 <Routes>
                   <Route path="/user" element={<User />} />
                   <Route path="/company" element={<Company />} />
@@ -122,7 +190,7 @@ const AppContent = () => {
                   <Route path="/credit-note" element={<Invoice />} />
                 </Routes>
               </main>
-            </>
+            </div>
           }
         />
       </Route>

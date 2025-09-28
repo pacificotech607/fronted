@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'bootstrap';
@@ -14,7 +14,27 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector((state: any) => state.user);
-    const sidebarWidth = collapse ? '60px' : '235px';
+    const [sidebarWidth, setSidebarWidth] = useState('280px');
+    
+    // Actualizar el ancho del sidebar cuando cambia el estado de collapse o el tamaño de ventana
+    useEffect(() => {
+        const updateSidebarWidth = () => {
+            if (window.innerWidth <= 768) {
+                setSidebarWidth('0px'); // En móvil, el sidebar no afecta al header
+            } else {
+                setSidebarWidth(collapse ? '70px' : '280px'); // Colapsado vs expandido
+            }
+        };
+        
+        updateSidebarWidth();
+        
+        const handleResize = () => {
+            updateSidebarWidth();
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [collapse]); // Se ejecuta cuando cambia el estado de collapse
 
     useEffect(() => {
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -31,97 +51,155 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
 
     return (
         <nav
-            className="app-header navbar navbar-expand bg-body"
+            className="app-header navbar navbar-expand bg-body shadow-sm"
             style={{
                 position: 'fixed',
                 top: 0,
-                left: sidebarWidth,
-                width: `calc(100% - ${sidebarWidth})`,
+                left: window.innerWidth >= 768 ? sidebarWidth : '0',
+                width: window.innerWidth >= 768 ? `calc(100% - ${sidebarWidth})` : '100%',
                 height: '60px',
                 transition: 'width 0.3s ease, left 0.3s ease',
-                zIndex: 999
+                zIndex: 1000
             }}
         >
-            <div className="container-fluid">
+            <div className="container-fluid px-3">
                 <ul className="navbar-nav">
                     <li className="nav-item">
                         <button
-                            className="nav-link"
+                            className="nav-link btn btn-outline-light border-0"
                             onClick={onToggleSidebar}
                             data-lte-toggle="sidebar"
                             type="button"
+                            aria-label="Toggle sidebar"
                         >
-                            <i className="bi bi-list"></i>
+                            <i className="bi bi-list fs-5"></i>
                         </button>
                     </li>
-                    <li className="nav-item d-none d-md-block">
-                        <a href="/#" className="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Home">Home</a>
+                    <li className="nav-item d-none d-lg-block">
+                        <a href="/#" className="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Home">
+                            <i className="bi bi-house-fill me-2"></i>Home
+                        </a>
                     </li>
-                    <li className="nav-item d-none d-md-block">
-                        <a href="/#" className="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Contact">Contact</a>
+                    <li className="nav-item d-none d-lg-block">
+                        <a href="/#" className="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Contact">
+                            <i className="bi bi-envelope-fill me-2"></i>Contact
+                        </a>
                     </li>
                 </ul>
 
-                <ul className="navbar-nav ms-auto" >
-                    <i className="bi bi-bell-fill" style={{marginRight: '15px', marginTop:'15px'}}></i>
-                    <li className="nav-item dropdown">
-                        <a className="nav-link" data-bs-toggle="dropdown" href="/#">
-                            <span className="navbar-badge badge text-bg-warning">15</span>
+                <ul className="navbar-nav ms-auto align-items-center">
+                    {/* Notification Bell - Hidden on small screens */}
+                    <li className="nav-item dropdown d-none d-sm-block">
+                        <a 
+                            className="nav-link position-relative" 
+                            data-bs-toggle="dropdown" 
+                            href="/#"
+                            aria-expanded="false"
+                        >
+                            <i className="bi bi-bell-fill fs-5"></i>
+                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+                                15
+                                <span className="visually-hidden">unread notifications</span>
+                            </span>
                         </a>
-                        <div className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                            <span className="dropdown-item dropdown-header">15 Notifications</span>
+                        <div className="dropdown-menu dropdown-menu-end dropdown-menu-lg shadow">
+                            <h6 className="dropdown-header">
+                                <i className="bi bi-bell me-2"></i>15 Notificaciones
+                            </h6>
                             <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item">
-                                <i className="bi bi-envelope me-2"></i> 4 new messages
-                                <span className="float-end text-secondary fs-7">3 mins</span>
+                            <a href="/#" className="dropdown-item d-flex align-items-center py-2">
+                                <div className="me-3">
+                                    <i className="bi bi-envelope-fill text-primary"></i>
+                                </div>
+                                <div className="flex-grow-1">
+                                    <div className="fw-medium">4 nuevos mensajes</div>
+                                    <div className="text-muted small">hace 3 mins</div>
+                                </div>
                             </a>
                             <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item">
-                                <i className="bi bi-people-fill me-2"></i> 8 friend requests
-                                <span className="float-end text-secondary fs-7">12 hours</span>
+                            <a href="/#" className="dropdown-item d-flex align-items-center py-2">
+                                <div className="me-3">
+                                    <i className="bi bi-people-fill text-success"></i>
+                                </div>
+                                <div className="flex-grow-1">
+                                    <div className="fw-medium">8 solicitudes de amistad</div>
+                                    <div className="text-muted small">hace 12 horas</div>
+                                </div>
                             </a>
                             <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item">
-                                <i className="bi bi-file-earmark-fill me-2"></i> 3 new reports
-                                <span className="float-end text-secondary fs-7">2 days</span>
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item dropdown-footer">
-                                See All Notifications
+                            <a href="/#" className="dropdown-item text-center py-2">
+                                <strong>Ver todas las notificaciones</strong>
                             </a>
                         </div>
                     </li>
-                    <li className="nav-item dropdown user-menu">
-                        <a href="/#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img
-                                src={"/synex.png"}
-                                alt="Synex"
-                                width={"25px"}
-                                height={"25px"}
-                            />
-                            <span className="d-none d-md-inline">{user?.email?.split('@')[0] || 'Synex'}</span>
-                        </a>
-                        <ul className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                            <li className="user-header text-bg-primary">
+                    {/* User Profile Dropdown */}
+                    <li className="nav-item dropdown">
+                        <a 
+                            className="nav-link d-flex align-items-center"
+                            data-bs-toggle="dropdown"
+                            href="/#"
+                            aria-expanded="false"
+                        >
+                            <div className="d-flex align-items-center">
                                 <img
-                                    src={"/synex.png"}
-                                    className=""
-                                    alt="Synex"
+                                    src="/synex.png"
+                                    alt="User Avatar"
+                                    className="rounded-circle me-2"
+                                    width="32"
+                                    height="32"
                                 />
-                                <p>{user?.email || 'synex'}
-                                    <small>Member since Nov. 2023</small>
-                                </p>
-                            </li>
-                            <li className="user-footer">
-                                <a href="/#" className="btn btn-default btn-flat">Profile</a>
-                                <button 
-                                    className="btn btn-default btn-flat float-end" 
-                                    onClick={handleLogout}
-                                >
-                                    Sign out
-                                </button>
-                            </li>
-                        </ul>
+                                <div className="d-none d-sm-block">
+                                    <div className="fw-medium text-truncate" style={{ maxWidth: '120px' }}>
+                                        {user?.email?.split('@')[0] || 'Synex'}
+                                    </div>
+                                    <div className="text-muted small">
+                                        {user?.role || 'Usuario'}
+                                    </div>
+                                </div>
+                                <i className="bi bi-chevron-down ms-2 d-none d-sm-inline"></i>
+                            </div>
+                        </a>
+
+                        <div className="dropdown-menu dropdown-menu-end shadow-sm">
+                            <div className="dropdown-header d-sm-none">
+                                <div className="d-flex align-items-center">
+                                    <img
+                                        src="/synex.png"
+                                        alt="User Avatar"
+                                        className="rounded-circle me-3"
+                                        width="40"
+                                        height="40"
+                                    />
+                                    <div>
+                                        <div className="fw-medium">
+                                            {user?.email?.split('@')[0] || 'Synex'}
+                                        </div>
+                                        <div className="text-muted small">
+                                            {user?.role || 'Usuario'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="dropdown-divider d-sm-none"></div>
+                            
+                            <a className="dropdown-item d-flex align-items-center py-2" href="/#">
+                                <i className="bi bi-person me-3"></i>
+                                Perfil
+                            </a>
+                            <a className="dropdown-item d-flex align-items-center py-2" href="/#">
+                                <i className="bi bi-gear me-3"></i>
+                                Configuración
+                            </a>
+                            <div className="dropdown-divider"></div>
+                            <button 
+                                className="dropdown-item d-flex align-items-center py-2 text-danger"
+                                onClick={handleLogout}
+                                type="button"
+                            >
+                                <i className="bi bi-box-arrow-right me-3"></i>
+                                Cerrar Sesión
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </div>

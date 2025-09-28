@@ -5,6 +5,207 @@
  *   Website: AdminLTE.io <https://adminlte.io>
  *   License: Open source - MIT <https://opensource.org/licenses/MIT>
  */
+
+/* Mobile-First Responsive Enhancements */
+
+/* Search Component Mobile Optimizations */
+.search-container {
+  width: 100%;
+  max-width: 400px; /* Limita el ancho máximo a un cuarto de pantalla típica */
+}
+
+.search-container .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.search-container .col-4,
+.search-container .col-6,
+.search-container .col-2 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 767.98px) {
+  /* En móviles mantiene el tamaño compacto */
+  .search-container {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* Search component elementos conectados en móvil también */
+  .search-container .form-select {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  .search-container .form-control {
+    border-radius: 0 !important;
+  }
+  
+  .search-container .btn {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+  
+  /* Filter badges más compactos en móvil */
+  .search-container .badge {
+    margin-bottom: 0.5rem;
+    max-width: calc(100vw - 2rem);
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Desktop layout - elementos connect seamlessly */
+  .search-container .form-select {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  .search-container .form-control {
+    border-radius: 0 !important;
+  }
+  
+  .search-container .btn {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  /* Form improvements for mobile */
+  .form-container .row.g-3 {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+  
+  .form-container .row.g-3 > * {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  /* Make all form columns stack on mobile */
+  .form-container .col-md-6,
+  .form-container .col-md-4,
+  .form-container .col-md-3,
+  .form-container .col-md-8,
+  .form-container .col-md-9 {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+  
+  /* Improve form controls on mobile */
+  .form-control,
+  .form-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.75rem;
+    min-height: 48px; /* Touch-friendly size */
+  }
+  
+  /* Button improvements */
+  .btn {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+  
+  .btn-group .btn {
+    min-height: 40px;
+  }
+  
+  /* Modal improvements for mobile */
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  /* Stack modal buttons vertically on mobile */
+  .modal-footer .btn + .btn {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .text-end .btn + .btn {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  /* App content mobile spacing */
+  .app-content {
+    margin: 0.5rem !important;
+    padding: 0.5rem;
+  }
+  
+  /* Search component mobile improvements */
+  .search-container .row.g-3 > * {
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Card spacing on mobile */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  /* Pagination mobile improvements */
+  .pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .pagination .page-item .page-link {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .form-container .col-md-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+  
+  .modal-dialog-lg,
+  .modal-dialog-xl {
+    max-width: 90%;
+  }
+}
+
+/* Touch improvements for all devices */
+@media (pointer: coarse) {
+  .btn, 
+  .form-control, 
+  .form-select,
+  .nav-link,
+  .dropdown-item {
+    min-height: 44px;
+  }
+  
+  .table .btn {
+    min-height: 36px;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* High DPI screen improvements */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .brand-image,
+  .user-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
 :root,
 [data-bs-theme=light] {
   --bs-blue: #0d6efd;

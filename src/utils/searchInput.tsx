@@ -61,25 +61,18 @@ const GenericMultiTagSearch = ({ searchOptions, onSearchButtonClick }: GenericMu
     };
 
     return (
-        <div>
-            <div className="row g-3" style={{ width: '900px' }}>
-                <div className="col-md-3" style={{ marginRight: '0px', paddingRight: '0px' }}>
+        <div className="search-container" style={{ maxWidth: '600px' }}>
+            <div className="row g-0 mb-3">
+                <div className="col-4">
                     <select
+                        className="form-select h-100 text-white border-0 rounded-start"
                         onChange={e => setSelectedField(e.target.value)}
                         value={selectedField}
                         style={{
                             backgroundColor: '#0d6efd',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            borderTopRightRadius: '0px',
-                            borderEndEndRadius: '0px',
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none',
-                            backgroundImage: `url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>')`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'right 10px center'
+                            minHeight: '50px',
+                            borderTopRightRadius: '0',
+                            borderBottomRightRadius: '0'
                         }}
                     >
                         {searchOptions.map(option => (
@@ -89,51 +82,66 @@ const GenericMultiTagSearch = ({ searchOptions, onSearchButtonClick }: GenericMu
                         ))}
                     </select>
                 </div>
-                <div className="col-md-6" style={{ marginRight: '0px', paddingRight: '0px', marginLeft: '0px', paddingLeft: '0px' }}>
+                <div className="col-6">
                     <input
                         type="text"
-                        placeholder="Agregar filtro"
+                        className="form-control h-100 border-0"
+                        placeholder="Buscar..."
                         value={searchTerm}
                         onChange={handleInputChange}
-                        style={{ height: '46px', borderRadius: '0px', marginTop: '1px' }}
+                        style={{ 
+                            minHeight: '48px',
+                            borderRadius: '0',
+                            fontSize: '16px' // Prevent zoom on iOS
+                        }}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                handleAddFilter();
+                            }
+                        }}
                     />
                 </div>
-                <div className="col-md-2" style={{ marginLeft: '0px', padding: '0px' }}>
-                    <button style={{ borderRadius: '0px', borderEndEndRadius: '10px', borderStartEndRadius: '10px', background: '#0d6efd' }} onClick={handleAddFilter}><i style={{ color: "#fff" }} className="bi bi-search"></i></button>
+                <div className="col-2">
+                    <button 
+                        className="btn btn-primary w-100 h-100 border-0 rounded-end d-flex align-items-center justify-content-center"
+                        onClick={handleAddFilter}
+                        type="button"
+                        style={{ 
+                            minHeight: '48px',
+                            borderTopLeftRadius: '0',
+                            borderBottomLeftRadius: '0'
+                        }}
+                    >
+                        <i className="bi bi-search fs-6"></i>
+                    </button>
                 </div>
             </div>
 
-
-            {/* Lista de tags de filtros activos */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {/* Lista de filtros activos - Compacta */}
+            <div className="d-flex flex-wrap gap-1 mt-2">
                 {activeFilters.map((filter, index) => (
                     <div
                         key={index}
+                        className="badge bg-primary d-flex align-items-center gap-1 px-2 py-1 small"
                         style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            background: '#0d6efd',
-                            padding: '5px 5px',
-                            borderRadius: '20px',
-                            border: '1px solid #ccc',
-                            color: "#fff",
-                            height: '40px',
-                            width: '200px'
+                            borderRadius: '15px',
+                            minHeight: '32px',
+                            maxWidth: '120px',
+                            wordWrap: 'break-word',
+                            fontSize: '0.8rem'
                         }}
                     >
-                        <span>{filter.label}</span>
+                        <span className="flex-grow-1 text-truncate">{filter.label}</span>
                         <button
                             onClick={() => handleRemoveFilter(filter)}
+                            className="btn-close btn-close-white btn-sm ms-1"
+                            type="button"
+                            aria-label="Eliminar filtro"
                             style={{
-                                border: 'none',
-                                background: 'transparent',
-                                cursor: 'pointer',
-                                fontSize: '16px',
-                                color: "#fff"
+                                fontSize: '0.8rem',
+                                opacity: 0.8
                             }}
                         >
-                            &times;
                         </button>
                     </div>
                 ))}

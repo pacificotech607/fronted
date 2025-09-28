@@ -57,48 +57,92 @@ const Login = () => {
   };
 
   return (
-    <div className="vh-100 d-flex justify-content-center align-items-center" style={{ background: 'linear-gradient(to bottom, #007bff, #e3f2fd)' }}>
-      <div className="card p-4 shadow text-center">
-        <img src="/synex.png" alt="Logo" className="mb-4" style={{ width: '150px', marginLeft: '25px' }} />
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+    <div className="min-vh-100 d-flex justify-content-center align-items-center px-3 py-4" style={{ background: 'linear-gradient(to bottom, #007bff, #e3f2fd)' }}>
+      <div className="card shadow-lg border-0" style={{ width: '100%', maxWidth: '400px' }}>
+        <div className="card-body p-4 p-md-5">
+          <div className="text-center mb-4">
+            <img 
+              src="/synex.png" 
+              alt="Logo" 
+              className="img-fluid mb-3" 
+              style={{ maxWidth: '120px', height: 'auto' }} 
             />
+            <h4 className="card-title text-primary mb-0">Bienvenido</h4>
+            <p className="text-muted small">Inicia sesión en tu cuenta</p>
           </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {validationErrors.length > 0 && (
-            <div className="alert alert-danger">
-              <ul className="mb-0">
-                {validationErrors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label fw-medium">
+                <i className="bi bi-envelope-fill me-2 text-primary"></i>
+                Email
+              </label>
+              <input
+                type="email"
+                className="form-control form-control-lg"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Ingresa tu email"
+                required
+              />
             </div>
-          )}
-          {errorMessage && (
-            <div className="alert alert-danger">{errorMessage}</div>
-          )}
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+            
+            <div className="mb-4">
+              <label htmlFor="password" className="form-label fw-medium">
+                <i className="bi bi-lock-fill me-2 text-primary"></i>
+                Contraseña
+              </label>
+              <input
+                type="password"
+                className="form-control form-control-lg"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingresa tu contraseña"
+                required
+              />
+            </div>
+            
+            {validationErrors.length > 0 && (
+              <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                <ul className="mb-0 ps-3">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {errorMessage && (
+              <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                <i className="bi bi-x-circle-fill me-2"></i>
+                {errorMessage}
+              </div>
+            )}
+            
+            <div className="d-grid">
+              <button 
+                type="submit" 
+                className="btn btn-primary btn-lg" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Iniciando sesión...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-box-arrow-in-right me-2"></i>
+                    Iniciar Sesión
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

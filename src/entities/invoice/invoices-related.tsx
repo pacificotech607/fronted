@@ -63,26 +63,28 @@ const InvoiceRelated: React.FC<InvoiceRelatedProps> = ({ control, onNext, onPrev
                     </div>
                 </div>
             </div>
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tipo de Relación</th>
-                        <th>Folio de Factura</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {fields.map((field, index) => (
-                        <tr key={field.id}>
-                            <td>{get(field, 'relationshipType.esLabel', '')}</td>
-                            <td>{(field as any).invoiceFolio}</td>
-                            <td className='text-center'>
-                                <button type="button" title="Eliminar" className="btn btn-danger" onClick={() => remove(index)}><i className="bi bi-trash3"></i></button>
-                            </td>
+            <div className="table-responsive">
+                <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Relación</th>
+                            <th>Folio de Factura</th>
+                            <th>Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {fields.map((field, index) => (
+                            <tr key={field.id}>
+                                <td>{get(field, 'relationshipType.esLabel', '')}</td>
+                                <td>{(field as any).invoiceFolio}</td>
+                                <td className='text-center'>
+                                    <button type="button" title="Eliminar" className="btn btn-danger" onClick={() => remove(index)}><i className="bi bi-trash3"></i></button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             <br />
             <div className="row g-3">
                 <div className="col-md-12 text-end">

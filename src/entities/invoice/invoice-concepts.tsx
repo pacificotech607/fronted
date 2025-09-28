@@ -102,12 +102,13 @@ const InvoiceConcepts: React.FC<InvoiceConceptsProps> = ({ control, onSubmit, on
           </button>
         </div>
       </div>
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Clave de Servicio</th>
-            <th>Unidad</th>
-            <th>Descripción</th>
+      <div className="table-responsive">
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>Clave de Servicio</th>
+              <th>Unidad</th>
+              <th>Descripción</th>
             <th>Cantidad</th>
             <th>P. Unitario</th>
             <th>Importe</th>
@@ -139,6 +140,7 @@ const InvoiceConcepts: React.FC<InvoiceConceptsProps> = ({ control, onSubmit, on
           })}
         </tbody>
       </table>
+      </div>
       <div className="row justify-content-end mt-3">
         <div className="col-md-4">
           <table className="table">

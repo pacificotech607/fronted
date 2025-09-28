@@ -21,11 +21,11 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
     reset,
     clearErrors,
   } = useForm<IPatio>({
-    mode: 'onSubmit'
+    mode: 'onSubmit',
   });
 
   const onSubmit = (data: IPatio) => {
-    if (patio && patio._id) {
+    if (patio) {
       // This is an update
       dispatch(updateEntity(data));
       toast.success(`Patio ${data.name} editado`, {
@@ -65,25 +65,27 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
         <form className="needs-validation" onSubmit={handleSubmit(onSubmit)}>
           <div className="card-body">
             <div className="row g-3">
-              <div className="col-md-12">
-                <label htmlFor="nameInput" className="form-label">Nombre</label>
+              <div className="col-12">
+                <label htmlFor="nameInput" className="form-label fw-semibold">
+                  Nombre <span className="text-danger">*</span>
+                </label>
                 <input
                   type="text"
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="nameInput"
-                  placeholder="Nombre"
-                  {...register("name", {
-                    required: "El nombre es obligatorio.",
-                    validate: async name => {
+                  placeholder="Ingrese el nombre del patio"
+                  autoFocus
+                  {...register('name', {
+                    required: 'El nombre es obligatorio.',
+                    validate: async (value) => {
                       try {
-                        const query = encodeURIComponent(JSON.stringify({ name: name }));
-                        const response = await axios.get<{ data: { docs: IPatio[] } }>(`/api/patios?query=${query}`);
-                        const existingPatios = response.data.data.docs;
-
+                        const existingPatiosResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/patio?name=${value}`);
+                        const existingPatios = existingPatiosResponse.data.data;
+                        
                         if (patio && patio._id) {
                           // This is an update
-                          const isDuplicate = existingPatios.some(p => p._id !== patio._id);
-                          if (isDuplicate) {
+                          const otherPatios = existingPatios.filter((p: IPatio) => p._id !== patio._id);
+                          if (otherPatios.length > 0) {
                             return "El nombre del patio ya existe.";
                           }
                         } else {
@@ -105,22 +107,27 @@ const PatioUpdate: React.FC<PatioUpdateProps> = ({ patio, refresh }) => {
             </div>
             <br />
             <div className="row g-3">
-              <div className="col-md-12 text-end">
-                <button
-                  style={{ marginRight: '10px' }}
-                  onClick={() => {
-                    reset();
-                    clearErrors();
-                  }}
-                  data-bs-dismiss="modal"
-                  className="btn btn-danger"
-                  type="button"
-                >
-                  Cancelar
-                </button>
-                <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">
-                  Guardar
-                </button>
+              <div className="col-12">
+                <div className="d-flex flex-column flex-sm-row justify-content-end gap-2">
+                  <button
+                    onClick={() => {
+                      reset();
+                      clearErrors();
+                    }}
+                    data-bs-dismiss="modal"
+                    className="btn btn-danger order-sm-1"
+                    type="button"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary order-sm-2" 
+                    data-bs-dismiss="modal"
+                  >
+                    Guardar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
