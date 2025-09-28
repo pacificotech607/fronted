@@ -20,6 +20,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapse, menuItems }) => {
     const [activePopover, setActivePopover] = useState<number | null>(null);
     const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
     const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
+    const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+    const [tooltipTimeout, setTooltipTimeout] = useState<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const handleResize = () => {
@@ -47,8 +50,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapse, menuItems }) => {
             if (hideTimeout) {
                 clearTimeout(hideTimeout);
             }
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+            }
         };
-    }, [activePopover, collapse, isMobile, hideTimeout]);
+    }, [activePopover, collapse, isMobile, hideTimeout, tooltipTimeout]);
 
     const toggleSubMenu = (index: number) => {
         setOpenMenus(prev => ({
@@ -72,34 +78,79 @@ const Sidebar: React.FC<SidebarProps> = ({ collapse, menuItems }) => {
     };
 
     const handleMouseEnter = (item: MenuItem, index: number, event: React.MouseEvent) => {
-        (event.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.1)';
+        const target = event.currentTarget as HTMLElement;
+        if (!target) return;
         
-        if (collapse && !isMobile && item.subMenus && item.subMenus.length > 0) {
+        target.style.backgroundColor = 'rgba(255,255,255,0.1)';
+        
+        if (collapse && !isMobile) {
+            // Limpiar timeouts existentes
             if (hideTimeout) {
                 clearTimeout(hideTimeout);
                 setHideTimeout(null);
             }
-            
-            const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-            const popoverWidth = 220;
-            let left = rect.right + 15;
-            
-            if (left + popoverWidth > window.innerWidth) {
-                left = rect.left - popoverWidth - 15;
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+                setTooltipTimeout(null);
             }
-            
-            setPopoverPosition({
-                top: rect.top,
-                left: Math.max(15, left)
-            });
-            setActivePopover(index);
+
+            if (item.subMenus && item.subMenus.length > 0) {
+                // Lógica existente para popovers con submenús
+                const rect = target.getBoundingClientRect();
+                const popoverWidth = 220;
+                let left = rect.right + 15;
+                
+                if (left + popoverWidth > window.innerWidth) {
+                    left = rect.left - popoverWidth - 15;
+                }
+                
+                setPopoverPosition({
+                    top: rect.top,
+                    left: Math.max(15, left)
+                });
+                setActivePopover(index);
+            } else {
+                // Mostrar tooltip para elementos sin submenús
+                const elementRef = target; // Guardar referencia del elemento
+                const timeout = setTimeout(() => {
+                    // Verificar que el elemento aún existe y está en el DOM
+                    if (elementRef && elementRef.isConnected) {
+                        const rect = elementRef.getBoundingClientRect();
+                        const tooltipWidth = 150;
+                        let left = rect.right + 15;
+                        
+                        if (left + tooltipWidth > window.innerWidth) {
+                            left = rect.left - tooltipWidth - 15;
+                        }
+                        
+                        setTooltipPosition({
+                            top: rect.top + rect.height / 2 - 20,
+                            left: Math.max(15, left)
+                        });
+                        setActiveTooltip(index);
+                    }
+                }, 500); // Mostrar tooltip después de 500ms
+                
+                setTooltipTimeout(timeout);
+            }
         }
     };
     
     const handleMouseLeave = (event: React.MouseEvent) => {
-        (event.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+        const target = event.currentTarget as HTMLElement;
+        if (target) {
+            target.style.backgroundColor = 'transparent';
+        }
         
         if (collapse && !isMobile) {
+            // Limpiar tooltip inmediatamente
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+                setTooltipTimeout(null);
+            }
+            setActiveTooltip(null);
+            
+            // Limpiar popover con delay
             const timeout = setTimeout(() => {
                 setActivePopover(null);
             }, 300);
@@ -365,6 +416,34 @@ const Sidebar: React.FC<SidebarProps> = ({ collapse, menuItems }) => {
                                     </a>
                                 ))}
                             </div>
+                        </div>
+                    )}
+
+                    {/* TOOLTIP SIMPLE - PARA ELEMENTOS SIN SUBMENUS */}
+                    {activeTooltip !== null && collapse && !isMobile && menuItems[activeTooltip] && !menuItems[activeTooltip].subMenus && (
+                        <div
+                            data-tooltip="true"
+                            style={{
+                                position: 'fixed',
+                                top: `${tooltipPosition.top}px`,
+                                left: `${tooltipPosition.left}px`,
+                                backgroundColor: '#2C3E50',
+                                color: '#fff',
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                fontSize: '0.85rem',
+                                fontWeight: '500',
+                                zIndex: 99999,
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                whiteSpace: 'nowrap',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                opacity: 1,
+                                transform: 'translateY(0)',
+                                transition: 'all 0.2s ease-in-out',
+                                pointerEvents: 'none'
+                            }}
+                        >
+                            {menuItems[activeTooltip].label}
                         </div>
                     )}
                 </>,
