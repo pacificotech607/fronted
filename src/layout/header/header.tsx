@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Tooltip } from 'bootstrap';
+import { logout } from '../../entities/user/user.reducer';
 import '../../App.css';
 
 type HeaderProps = {
@@ -8,6 +11,9 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { user } = useSelector((state: any) => state.user);
     const sidebarWidth = collapse ? '60px' : '235px';
 
     useEffect(() => {
@@ -16,6 +22,12 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
             new Tooltip(tooltipTriggerEl);
         });
     }, []);
+
+    const handleLogout = (e: React.MouseEvent) => {
+        e.preventDefault();
+        dispatch(logout());
+        navigate('/login');
+    };
 
     return (
         <nav
@@ -87,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
                                 width={"25px"}
                                 height={"25px"}
                             />
-                            <span className="d-none d-md-inline">Synex</span>
+                            <span className="d-none d-md-inline">{user?.email?.split('@')[0] || 'Synex'}</span>
                         </a>
                         <ul className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <li className="user-header text-bg-primary">
@@ -96,13 +108,18 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
                                     className=""
                                     alt="Synex"
                                 />
-                                <p>synex
+                                <p>{user?.email || 'synex'}
                                     <small>Member since Nov. 2023</small>
                                 </p>
                             </li>
                             <li className="user-footer">
                                 <a href="/#" className="btn btn-default btn-flat">Profile</a>
-                                <a href="/#" className="btn btn-default btn-flat float-end">Sign out</a>
+                                <button 
+                                    className="btn btn-default btn-flat float-end" 
+                                    onClick={handleLogout}
+                                >
+                                    Sign out
+                                </button>
                             </li>
                         </ul>
                     </li>

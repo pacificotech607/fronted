@@ -20,8 +20,8 @@ import ReturnPort from './modules/returnport/return-port';
 import TripExitReview from './modules/tripexitreview/trip-exit-review';
 import ReturnTrip from './modules/returntrip/return-trip';
 import Invoice from './entities/invoice/invoice';
-
-
+import Login from './modules/login/login';
+import PrivateRoute from './utils/PrivateRoute';
 
 interface MenuItem {
   label: string;
@@ -30,7 +30,8 @@ interface MenuItem {
   subMenus?: { label: string; href: string }[];
 }
 
-function App() {
+// Component to handle navigation after login
+const AppContent = () => {
   const [collapse, setCollapse] = useState(false);
 
   const menuItems: MenuItem[] = [
@@ -91,35 +92,52 @@ function App() {
   const sidebarWidth = collapse ? '60px' : '235px';
 
   return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route element={<PrivateRoute />}>
+        <Route
+          path="/*"
+          element={
+            <>
+              <Header onToggleSidebar={() => setCollapse(!collapse)} collapse={collapse} />
+              <Sidebar collapse={collapse} menuItems={menuItems} />
+              <main className="app-main" style={{ marginLeft: sidebarWidth, marginTop: '60px', transition: 'margin-left 0.3s ease' }}>
+                <Routes>
+                  <Route path="/user" element={<User />} />
+                  <Route path="/company" element={<Company />} />
+                  <Route path="/operator" element={<Operator />} />
+                  <Route path="/motorTransport" element={<MotorTransport />} />
+                  <Route path="/patio" element={<Patio />} />
+                  <Route path="/tab" element={<Tab />} />
+                  <Route path="/sparePart" element={<SparePart />} />
+                  <Route path="/valuelist" element={<Valuelist />} />
+                  <Route path="/bls" element={<BLS />} />
+                  <Route path="/assignPort" element={<AssignPort />} />
+                  <Route path="/assignTrips" element={<AssignTrips />} />
+                  <Route path="/portExitReview" element={<PortExitReview />} />
+                  <Route path="/returnPort" element={<ReturnPort />} />
+                  <Route path="/tripExitReview" element={<TripExitReview />} />
+                  <Route path="/returnTrip" element={<ReturnTrip />} />
+                  <Route path="/invoice" element={<Invoice />} />
+                  <Route path="/credit-note" element={<Invoice />} />
+                </Routes>
+              </main>
+            </>
+          }
+        />
+      </Route>
+    </Routes>
+  );
+};
+
+// Main App component
+function App() {
+  return (
     <div>
       <ToastContainer />
-      <Header onToggleSidebar={() => setCollapse(!collapse)} collapse={collapse} />
-      <Sidebar collapse={collapse} menuItems={menuItems} />
-      <main className="app-main" style={{ marginLeft: sidebarWidth, marginTop: '60px', transition: 'margin-left 0.3s ease' }}>
-        <Router>
-          <Routes>
-            <Route path="/user" element={<User />} />
-            <Route path="/company" element={<Company />} />
-            <Route path="/operator" element={<Operator />} />
-            <Route path="/motorTransport" element={<MotorTransport />} />
-            <Route path="/patio" element={<Patio />} />
-            <Route path="/tab" element={<Tab />} />
-            <Route path="/sparePart" element={<SparePart />} />
-            <Route path="/valuelist" element={<Valuelist />} />
-            <Route path='/bls' element={<BLS />} />
-            <Route path='/assignPort' element={<AssignPort />} />
-            <Route path='/assignTrips' element={<AssignTrips />} />
-            <Route path='/portExitReview' element={<PortExitReview />} />
-            <Route path='/returnPort' element={<ReturnPort />} />
-            <Route path='/tripExitReview' element={<TripExitReview />} />
-            <Route path='/returnTrip' element={<ReturnTrip />} />
-            <Route path="/invoice" element={<Invoice />} />
-            <Route path="/credit-note" element={<Invoice />} />
-
-            {/* Más rutas públicas */}
-          </Routes>
-        </Router>
-      </main>
+      <Router>
+        <AppContent />
+      </Router>
     </div>
   );
 }

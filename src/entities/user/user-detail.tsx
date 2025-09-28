@@ -10,21 +10,17 @@ const UserDetail: React.FC<UserDetailProps> = ({ user }) => {
         <GenericModal
             id="userDetailModal"
             title="Detalles del usuario"
-        >
+        >|
             <div className="card-body p-0">
                 <table className="table table-striped">
                     <tbody>
                         <tr className="align-middle">
                             <td>User</td>
-                            <td>{user?.user}</td>
+                            <td>{user?.login}</td>
                         </tr>
                         <tr>
                             <td>Correo</td>
                             <td>{user?.email}</td>
-                        </tr>
-                        <tr className="align-middle">
-                            <td>Puesto</td>
-                            <td>{user?.workstation}</td>
                         </tr>
                     </tbody>
                 </table>

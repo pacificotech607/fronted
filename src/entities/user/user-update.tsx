@@ -1,7 +1,7 @@
 import { IUser } from '../../model/user.model';
 import GenericModal from '../../utils/Modal';
 import { useForm, Controller } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createEntity, updateEntity } from './user.reducer';
 import AsyncSelectInput from '../../utils/asynSelect';
@@ -13,6 +13,7 @@ type UserUpdateProps = {
 
 const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     formState: { errors },
@@ -55,10 +56,10 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
                 <label htmlFor="userInput" className="form-label">Usuario</label>
                 <input
                   type="text"
-                  className={`form-control ${errors.user ? 'is-invalid' : ''}`}
+                  className={`form-control ${errors.login ? 'is-invalid' : ''}`}
                   id="userInput"
                   placeholder="Usuario"
-                  {...register('user', {
+                  {...register('login', {
                     required: 'El nombre de usuario es obligatorio.',
                     minLength: {
                       value: 3,
@@ -70,7 +71,7 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
                     },
                   })}
                 />
-                {errors.user && <div className="invalid-feedback">{errors.user.message}</div>}
+                {errors.login && <div className="invalid-feedback">{errors.login.message}</div>}
               </div>
               <div className="col-md-6">
                 <label htmlFor="emailInput" className="form-label">Correo</label>
@@ -92,24 +93,34 @@ const UserUpdate: React.FC<UserUpdateProps> = ({ user, refresh }) => {
             </div>
             <div className="row g-3">
               <div className="col-md-12">
-                <label htmlFor="selectInput" className="form-label">Puesto</label>
-                <Controller
-                  name="workstation"
-                  control={control}
-                  rules={{ required: 'Por favor, selecciona un puesto.' }}
-                  render={({ field }) => (
-                    <AsyncSelectInput
-                      entityName="valuelists"
-                      labelField="esLabel"
-                      searchField="esLabel"
-                      onChange={value => field.onChange(value._id)}
-                      defaultValue={user?.workstation}
-                      initialConditions={encodeURIComponent(JSON.stringify({ type: 'workstation', alive: true }))}
-                      isRequired
-                    />
-                  )}
-                />
-                {errors.workstation && <div className="invalid-feedback">{errors.workstation.message}</div>}
+                <label htmlFor="passwordInput" className="form-label">Contraseña</label>
+                <div className="input-group">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                    id="passwordInput"
+                    placeholder="Contraseña"
+                    {...register('password', {
+                      required: !user ? 'La contraseña es obligatoria.' : false,
+                      minLength: {
+                        value: 8,
+                        message: 'La contraseña debe tener al menos 8 caracteres.',
+                      },
+                      pattern: {
+                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                        message: 'La contraseña debe contener al menos una minúscula, una mayúscula, un número y un carácter especial.',
+                      },
+                    })}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <i className={showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i>
+                  </button>
+                </div>
+                {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
               </div>
             </div>
             <br />

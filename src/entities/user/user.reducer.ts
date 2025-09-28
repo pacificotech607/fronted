@@ -7,6 +7,8 @@ export const ACTION_TYPES = {
   CREATE_USER: 'user/CREATE_USER',
   UPDATE_USER: 'user/UPDATE_USER',
   DELETE_USER: 'user/DELETE_USER',
+  LOGIN: 'user/LOGIN',
+  LOGOUT: 'user/LOGOUT',
   RESET: 'user/RESET',
 };
 
@@ -29,6 +31,7 @@ const userReducer = (state: UserState = initialState, action: any): UserState =>
   switch (action.type) {
     case `${ACTION_TYPES.FETCH_USERS}_PENDING`:
     case `${ACTION_TYPES.FETCH_USER}_PENDING`:
+    case `${ACTION_TYPES.LOGIN}_PENDING`:
       return {
         ...state,
         errorMessage: null,
@@ -58,6 +61,15 @@ const userReducer = (state: UserState = initialState, action: any): UserState =>
         loading: false,
         user: action.payload.data,
       };
+    case `${ACTION_TYPES.LOGIN}_FULFILLED`:
+      localStorage.setItem('user', JSON.stringify(action.payload.data.user || action.payload.data));
+      const userData = action.payload.data.user || action.payload.data;
+      return {
+        ...state,
+        loading: false,
+        errorMessage: null,
+        user: userData,
+      };
     case `${ACTION_TYPES.CREATE_USER}_FULFILLED`:
     case `${ACTION_TYPES.UPDATE_USER}_FULFILLED`:
       return {
@@ -78,12 +90,18 @@ const userReducer = (state: UserState = initialState, action: any): UserState =>
     case `${ACTION_TYPES.CREATE_USER}_REJECTED`:
     case `${ACTION_TYPES.UPDATE_USER}_REJECTED`:
     case `${ACTION_TYPES.DELETE_USER}_REJECTED`:
+    case `${ACTION_TYPES.LOGIN}_REJECTED`:
       return {
         ...state,
         loading: false,
         updating: false,
         updateSuccess: false,
         errorMessage: action.error.message,
+      };
+    case ACTION_TYPES.LOGOUT:
+      localStorage.removeItem('user');
+      return {
+        ...initialState,
       };
     case ACTION_TYPES.RESET:
       return {
@@ -126,6 +144,15 @@ export const updateEntity = (entity: IUser) => ({
 export const deleteEntity = (id: string) => ({
   type: ACTION_TYPES.DELETE_USER,
   payload: axios.delete<IUser>(`${apiUrl}/${id}`),
+});
+
+export const login = (credentials: { email: string; password: string }) => ({
+  type: ACTION_TYPES.LOGIN,
+  payload: axios.post<IUser>(`${apiUrl}/login`, credentials),
+});
+
+export const logout = () => ({
+  type: ACTION_TYPES.LOGOUT,
 });
 
 export const reset = () => ({

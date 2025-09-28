@@ -1,6 +1,7 @@
+
 export  interface IUser {
     _id?: string;
-    user?: string;
+    login?: string;
     email?: string;
-    workstation?: string;
+    password?: string;
 }

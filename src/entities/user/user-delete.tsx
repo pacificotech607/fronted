@@ -25,7 +25,7 @@ const UserDelete: React.FC<UserDeleteProps> = ({ user, refresh }) => {
     >
       <div className="card-body p-0 text-center">
         <i className="bi bi-trash" style={{ color: '#e93e3e', fontSize: '200px' }}></i>
-        <p>¿Estás seguro de que deseas eliminar este usuario {user?.user}?</p>
+        <p>¿Estás seguro de que deseas eliminar este usuario {user?.login}?</p>
         <br />
         <div className="row g-3">
           <div className="col-md-12 text-center">

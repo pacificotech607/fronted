@@ -86,7 +86,6 @@ const User: React.FC = () => {
               <th>Acciones</th>
               <th>Usuario</th>
               <th>Correo</th>
-              <th>Puesto</th>
             </tr>
           </thead>
           <tbody>
@@ -126,9 +125,8 @@ const User: React.FC = () => {
                     </button>
                   </div>
                 </td>
-                <td>{user.user}</td>
+                <td>{user.login}</td>
                 <td>{user.email}</td>
-                <td>{user.workstation}</td>
               </tr>
             ))}
           </tbody>
