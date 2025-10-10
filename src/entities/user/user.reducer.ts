@@ -51,9 +51,9 @@ const userReducer = (state: UserState = initialState, action: any): UserState =>
       return {
         ...state,
         loading: false,
-        users: action.payload.data.docs,
-        totalPages: action.payload.data.totalPages,
-        page: action.payload.data.page,
+        users: action.payload.data.data.docs,
+        totalPages: action.payload.data.data.totalPages,
+        page: action.payload.data.data.page,
       };
     case `${ACTION_TYPES.FETCH_USER}_FULFILLED`:
       return {

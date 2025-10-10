@@ -15,7 +15,6 @@ const User: React.FC = () => {
   const activePage = useSelector((state: IRootState) => state.user.page);
   const [user, setUser] = useState<IUser | null>(null);
   const [searchQuery, setSearchQuery] = useState<string | null>(JSON.stringify({ alive: true }));
-
   useEffect(() => {
     dispatch(getEntities(0, 20, searchQuery || undefined));
   }, [dispatch, searchQuery]);

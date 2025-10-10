@@ -24,6 +24,7 @@ import ReturnTrip from './modules/returntrip/return-trip';
 import Invoice from './entities/invoice/invoice';
 import Login from './modules/login/login';
 import PrivateRoute from './utils/PrivateRoute';
+import Home from './entities/home';
 
 interface MenuItem {
   label: string;
@@ -77,6 +78,11 @@ const AppContent = () => {
   }, [isMobile]); // Agregar isMobile como dependencia para detectar cambios
 
   const menuItems: MenuItem[] = [
+    {
+      label: 'Home',
+      icon: 'bi bi-house-door',
+      href: '/home'
+    },
     {
       label: 'User',
       icon: 'bi bi-people',
@@ -171,6 +177,8 @@ const AppContent = () => {
                 }}
               >
                 <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/user" element={<User />} />
                   <Route path="/company" element={<Company />} />
                   <Route path="/operator" element={<Operator />} />
