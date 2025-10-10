@@ -61,14 +61,25 @@ const Login = () => {
       <div className="card shadow-lg border-0" style={{ width: '100%', maxWidth: '400px' }}>
         <div className="card-body p-4 p-md-5">
           <div className="text-center mb-4">
-            <img 
-              src="/synex.png" 
-              alt="Logo" 
-              className="img-fluid mb-3" 
-              style={{ maxWidth: '120px', height: 'auto' }} 
-            />
-            <h4 className="card-title text-primary mb-0">Bienvenido</h4>
-            <p className="text-muted small">Inicia sesión en tu cuenta</p>
+            {/* Logo centrado */}
+            <div className="d-flex justify-content-center mb-3">
+              <img 
+                src="/synex.png" 
+                alt="Logo" 
+                className="img-fluid" 
+                style={{ maxWidth: '120px', height: 'auto' }} 
+              />
+            </div>
+            
+            {/* Texto Bienvenido centrado */}
+            <div className="d-flex justify-content-center mb-2">
+              <h4 className="card-title text-primary mb-0" style={{ textAlign: 'center' }}>Bienvenido</h4>
+            </div>
+            
+            {/* Texto Inicia sesión centrado */}
+            <div className="d-flex justify-content-center">
+              <p className="text-muted small mb-0" style={{ textAlign: 'center' }}>Inicia sesión en tu cuenta</p>
+            </div>
           </div>
           
           <form onSubmit={handleSubmit}>
