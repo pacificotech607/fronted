@@ -88,50 +88,8 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, collapse }) => {
                 </ul>
 
                 <ul className="navbar-nav ms-auto align-items-center">
-                    {/* Notification Bell - Hidden on small screens */}
-                    <li className="nav-item dropdown d-none d-sm-block">
-                        <a 
-                            className="nav-link position-relative" 
-                            data-bs-toggle="dropdown" 
-                            href="/#"
-                            aria-expanded="false"
-                        >
-                            <i className="bi bi-bell-fill fs-5"></i>
-                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
-                                15
-                                <span className="visually-hidden">unread notifications</span>
-                            </span>
-                        </a>
-                        <div className="dropdown-menu dropdown-menu-end dropdown-menu-lg shadow">
-                            <h6 className="dropdown-header">
-                                <i className="bi bi-bell me-2"></i>15 Notificaciones
-                            </h6>
-                            <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item d-flex align-items-center py-2">
-                                <div className="me-3">
-                                    <i className="bi bi-envelope-fill text-primary"></i>
-                                </div>
-                                <div className="flex-grow-1">
-                                    <div className="fw-medium">4 nuevos mensajes</div>
-                                    <div className="text-muted small">hace 3 mins</div>
-                                </div>
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item d-flex align-items-center py-2">
-                                <div className="me-3">
-                                    <i className="bi bi-people-fill text-success"></i>
-                                </div>
-                                <div className="flex-grow-1">
-                                    <div className="fw-medium">8 solicitudes de amistad</div>
-                                    <div className="text-muted small">hace 12 horas</div>
-                                </div>
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a href="/#" className="dropdown-item text-center py-2">
-                                <strong>Ver todas las notificaciones</strong>
-                            </a>
-                        </div>
-                    </li>
+                    {/* Fuel Alerts Bell - Hidden on small screens */}
+                    
                     {/* User Profile Dropdown */}
                     <li className="nav-item dropdown">
                         <a 
