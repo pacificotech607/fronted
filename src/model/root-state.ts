@@ -2,7 +2,6 @@ import { BlsState } from '../entities/bls/bls.reducer';
 import { CompanyState } from '../entities/company/company.reducer';
 import { FuelState } from '../entities/fuel/fuel.reducer';
 import { FuelInventoryState } from '../entities/fuelInventory/fuelInventory.reducer';
-import { FuelRequestState } from '../entities/fuelRequest/fuelRequest.reducer';
 import { MotorTransportState } from '../entities/motorTransport/motorTransport.reducer';
 import { OperatorState } from '../entities/operator/operator.reducer';
 import { PatioState } from '../entities/patio/patio.reducer';
@@ -17,7 +16,6 @@ export interface IRootState {
   readonly company: CompanyState;
   readonly fuel: FuelState;
   readonly fuelInventory: FuelInventoryState;
-  readonly fuelRequest: FuelRequestState;
   readonly motorTransport: MotorTransportState;
   readonly operator: OperatorState;
   readonly patio: PatioState;
